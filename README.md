@@ -14,3 +14,28 @@ The tester can change the acceptable percent of change to allow between images. 
 ## Further info
 
 This is a work in progress and the code is just a quick and dirty way to get some automated visual testing done (it needs a bit of work!). Feel free to fork and improve this solution - I'd love any help with this idea.
+
+## How to use
+
+First we need to take screenshots of all the web pages we want to test are still visually the same. We do this by specifying the url of the page and a screenshot will then get saved to the Screenshots folder:
+
+``` c#
+ // Create initial screenshot of website used within regression tests later on
+ImageComparison.SaveScreenShotByUrl("http://google.co.uk");
+```
+
+As you develop your pages you will want to test to check if they are still displayed the way you expect them to. Next we create a test which references the expected screenshot and then give the url which represents the screenshot: 
+
+``` c#
+ [TestMethod]
+        public void TestHomePageLooksAsExpected()
+        {
+            String expectedScreen = "Google.png";
+            String actualScreen = "http://google.co.uk";
+            Decimal imageDifference = ImageComparison.GetImageDifference(expectedScreen, actualScreen);
+
+            Assert.IsTrue(imageDifference <= acceptableImageDifference, string.Format("Difference:{0}",imageDifference));
+        }
+
+        Decimal acceptableImageDifference = Convert.ToDecimal("0.00");
+```
