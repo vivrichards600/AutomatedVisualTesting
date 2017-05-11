@@ -1,4 +1,4 @@
-﻿// Image Comparison using https://www.codeproject.com/articles/374386/simple-image-comparison-in-net
+// Image Comparison using https://www.codeproject.com/articles/374386/simple-image-comparison-in-net
 
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -19,30 +19,55 @@ namespace AutomatedVisualTesting
         /// <param name="url">Webpage to navigate to</param>
         public static void SaveScreenShotByUrl(string url)
         {
+            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute)) throw new UriFormatException("Please check url provided is valid");
+
             IWebDriver driver = new ChromeDriver();
             driver.Navigate().GoToUrl(url);
 
             Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
-            String pageTitle = driver.Title.ToString();
-            String fileName = string.Format("../../Screenshots/{0}.png", pageTitle);
 
-            ss.SaveAsFile(fileName, ImageFormat.Png); //use any of the built in image formating
+            String pageTitle = driver.Title.ToString();
+            // TODO: Stick directory in a setting
+            String fileDirectory = "../../Screenshots/";
+            if (!Directory.Exists(fileDirectory))
+            {
+                // screenshot directory doesn't exist
+                driver.Close();
+                throw new IOException("Please check screenshots folder exists within test solution to save screenshots");
+            }
+
+            // save screenshot
+            String fileName = string.Format("{0}{1}.png", fileDirectory, pageTitle);
+            ss.SaveAsFile(fileName, ImageFormat.Png);
 
             driver.Close();
         }
 
         /// <summary>
-        /// Get a screenshot of a webpage by url
+        /// Compares a stored image against against an image taken at runtime
         /// </summary>
-        /// <param name="url">Webpage to navigate to</param>
-        /// <returns></returns>
-        public static byte[] GetScreenshotByUrl(string url)
+        /// <param name="filename">File path of the first image to compare</param>
+        /// <param name="url">Url of website to take snapshot of to compare</param>
+        /// <returns>Percentage difference of stored image and image taken during runtime</returns>
+        public static decimal GetImageDifference(string filename, string url)
+        {
+            // TODO: Stick directory in a setting
+            String filepath = string.Format("../../Screenshots/{0}",filename);
+            if (!File.Exists(filepath)) throw new IOException("Please check image path provided is valid");
+            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute)) throw new UriFormatException("Please check url provided is valid");
+
+            MemoryStream currentScreenshot = new MemoryStream(ImageComparison.GetScreenshotByUrl(url));
+
+            Bitmap firstBmp = (Bitmap)Image.FromFile(filepath);
+            Bitmap secondBmp = (Bitmap)Image.FromStream(currentScreenshot);
+
+            return Convert.ToDecimal(firstBmp.PercentageDifference(secondBmp, 0) * 100);
+        }
+
+        private static byte[] GetScreenshotByUrl(string url)
         {
             IWebDriver driver = new ChromeDriver();
             driver.Navigate().GoToUrl(url);
-
-            //TODO: Currently waiting for elements to load, need to refactor
-            driver.Manage().Timeouts().ImplicitlyWait(TimeSpan.FromSeconds(50));
 
             Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
             string screenshot = ss.AsBase64EncodedString;
@@ -51,37 +76,6 @@ namespace AutomatedVisualTesting
             driver.Close();
 
             return bytes;
-        }
-
-        /// <summary>
-        /// Used in Try Catch to save screenshot on test failure
-        /// </summary>
-        /// <param name="memoryStream">Memory stream of screenshot 
-        /// which didn't match what we expected</param>
-        public static void TestFailureSaveScreenShot(MemoryStream memoryStream)
-        {
-            MemoryStream stream = memoryStream;
-            String filename = string.Format("../../Screenshots/{0}.TestFailureScreenshot.png", DateTime.Now.ToString("dd-MM-yyy.HHmm"));
-            System.IO.File.WriteAllBytes(filename, stream.ToArray());
-
-            String failureInformation = string.Format("Test failed. View screenshot {0} for further information.", filename);
-        }
-
-        /// <summary>
-        /// Compare two images and returns perenctage of 
-        /// how much they differe from each other
-        /// </summary>
-        /// <param name="imagePath">File path of the first image to compare</param>
-        /// <param name="imageStream">File stream of second image to compare</param>
-        /// <returns></returns>
-        public static string CompareImages(string imagePath, MemoryStream imageStream)
-        {
-            ////compare the two images
-            Bitmap firstBmp = (Bitmap)Image.FromFile(imagePath);
-            Bitmap secondBmp = (Bitmap)Image.FromStream(imageStream);
-            
-            // Get Percentage difference between two images
-            return string.Format("{0:0.0}", firstBmp.PercentageDifference(secondBmp, 0) * 100);
         }
     }
 }
