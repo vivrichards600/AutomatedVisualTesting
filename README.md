@@ -4,12 +4,10 @@ Lots of tests rely on Selenium WebDriver and similar tools to automate end to en
 
 Using this 'Visual' approach tests can execute a lot quicker and ensure elements are rendered how we expect them to be rathan than the typical approach of trying to find each element to ensure things have loaded on to a page.
 
-## About 
-The following solution is based off an idea I found here https://www.codeproject.com/articles/374386/simple-image-comparison-in-net to compare images. I have taken this idea further to automate screen capture both to disk and in memory for speed whilst running tests using Selenium WebDriver.
+## How it works 
+Once you are happy with the way each of your web pages look you take screenshots of each of the pages using the built in helper. Each time you make changes to your project then you can run these automated visual regression tests. Using Selenium we navigate to the web pages you specify (relating to the screenshots we captured) and take a new screenshot (which we hold in memory) and then compare the image in our local folder to the one we've just taken in memory to see if they differ. 
 
-The idea is to create screenshots of your web app to capture what you expect it to look like - these get saved to the Screenshots folder. Each time you want to run regression tests you simply get selenium to go to the web pages you specify (relating to the images we captured) and take a new screenshot (which we hold in memory) and then compare the images to see if they differ. 
-
-The tester can change the acceptable percent of change to allow between images. If tests keep failing when not expected there is the ability to take screenshots on test failure which will then enable you to do some quick comparison of the actual and expected pages.
+You can change the acceptable percent of change to allow between images. When images differe a screenshot is taken and saved to the screenshots folder showing you where differences were detected.
 
 ## Further info
 
@@ -21,21 +19,43 @@ First we need to take screenshots of all the web pages we want to test are still
 
 ``` c#
  // Create initial screenshot of website used within regression tests later on
-ImageComparison.SaveScreenShotByUrl("http://google.co.uk");
+        ImageTool.SaveScreenShotByUrl("http://www.google.com/");
 ```
 
 As you develop your pages you will want to test to check if they are still displayed the way you expect them to. Next we create a test which references the expected screenshot and then give the url which represents the screenshot: 
 
 ``` c#
- [TestMethod]
-        public void TestHomePageLooksAsExpected()
-        {
-            String expectedScreen = "Google.png";
-            String actualScreen = "http://google.co.uk";
-            Decimal imageDifference = ImageComparison.GetImageDifference(expectedScreen, actualScreen);
+    [TestMethod]
+    public void DetectDifferenceBetweenImageAndUrl()
+    {
+        //Arrange
+        String image = "Google.png";
+        Uri url = new Uri("http://www.google.com/");
 
-            Assert.IsTrue(imageDifference <= acceptableImageDifference, string.Format("Difference:{0}",imageDifference));
-        }
+        //Act
+        int difference = ImageTool.GetPercentageDifference(image, url);
 
-        Decimal acceptableImageDifference = Convert.ToDecimal("0.00");
+        //Assert
+        Assert.IsTrue(difference == 0); // do not allow any difference
+
+    }
+```
+
+
+You also have the ability to reference two images already captured and check for differences: 
+
+``` c#
+   [TestMethod]
+    public void DetectASinglePixelDifferenceBetweenTwoImagesTest()
+    {
+        //Arrange
+        String image1 = "GooglePixel1.png";
+        String image2 = "GooglePixel2.png";
+
+        //Act
+        int difference = ImageTool.GetPercentageDifference(image1, image2);
+
+        //Assert
+        Assert.IsTrue(difference == 1); // find 1 pixel difference
+    }
 ```
