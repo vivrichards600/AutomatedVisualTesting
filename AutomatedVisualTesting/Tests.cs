@@ -1,29 +1,45 @@
-using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
+using System;
 
-namespace AutomatedVisualTesting
+[TestClass]
+public class Tests
 {
-    [TestClass]
-    public class Tests
+    [TestMethod]
+    public void CreateInitialScreenshot()
     {
-        [TestMethod]
-        public void CreateInitialScreenshots()
-        {
-            // Create initial screenshot of website used within regression tests later on
-            ImageComparison.SaveScreenShotByUrl("http://google.co.uk");
-        }
-
-        [TestMethod]
-        public void TestHomePageLooksAsExpected()
-        {
-            String expectedScreen = "Google.png";
-            String actualScreen = "http://google.co.uk";
-            Decimal imageDifference = ImageComparison.GetImageDifference(expectedScreen, actualScreen);
-
-            Assert.IsTrue(imageDifference <= acceptableImageDifference, string.Format("Difference:{0}",imageDifference));
-        }
-
-        Decimal acceptableImageDifference = Convert.ToDecimal("0.00");
+        // Create initial screenshot of website used within regression tests later on
+        ImageTool.SaveScreenShotByUrl("http://www.google.com/");
     }
+
+    [TestMethod]
+    public void DetectDifferenceBetweenImageAndUrl()
+    {
+        //Arrange
+        String image = "Google.png";
+        Uri url = new Uri("http://www.google.com/");
+
+        //Act
+        int difference = ImageTool.GetPercentageDifference(image, url);
+
+        //Assert
+        Assert.IsTrue(difference == 0); // do not allow any difference
+
+    }
+
+
+    [TestMethod]
+    public void DetectASinglePixelDifferenceBetweenTwoImagesTest()
+    {
+        //Arrange
+        String image1 = "GooglePixel1.png";
+        String image2 = "GooglePixel2.png";
+
+        //Act
+        int difference = ImageTool.GetPercentageDifference(image1, image2);
+
+        //Assert
+        Assert.IsTrue(difference == 1); // find 1 pixel difference
+    }
+
+
 }
