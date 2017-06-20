@@ -2,13 +2,15 @@
 // .net based image comparison utillity which produces pixel matrix based comaprison
 // Capable of detecting a single pixel difference between images
 
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using System;
-using System.Drawing;
+using System.Collections.Generic;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.Drawing;
 using System.IO;
+using System.Linq;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 
 /// <summary>
 /// A class with extensionmethods for comparing images

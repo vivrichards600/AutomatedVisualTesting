@@ -23,9 +23,7 @@ public class Tests
 
         //Assert
         Assert.IsTrue(difference == 0); // do not allow any difference
-
     }
-
 
     [TestMethod]
     public void DetectASinglePixelDifferenceBetweenTwoImagesTest()
@@ -40,6 +38,4 @@ public class Tests
         //Assert
         Assert.IsTrue(difference == 1); // find 1 pixel difference
     }
-
-
 }
