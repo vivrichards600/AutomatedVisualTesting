@@ -19,23 +19,23 @@ public class Tests
         Uri url = new Uri("http://www.google.com/");
 
         //Act
-        int difference = ImageTool.GetPercentageDifference(image, url);
+        int difference = ImageTool.GetDifference(image, url);
 
         //Assert
         Assert.IsTrue(difference == 0); // do not allow any difference
     }
 
     [TestMethod]
-    public void DetectASinglePixelDifferenceBetweenTwoImagesTest()
+    public void DetectCSSDifferenceBetweenTwoImagesTest()
     {
         //Arrange
-        String image1 = "GooglePixel1.png";
-        String image2 = "GooglePixel2.png";
+        String image1 = "Google1.png";
+        String image2 = "Google2.png";
 
         //Act
-        int difference = ImageTool.GetPercentageDifference(image1, image2);
+        int difference = ImageTool.GetDifference(image1, image2);
 
         //Assert
-        Assert.IsTrue(difference == 1); // find 1 pixel difference
+        Assert.IsTrue(difference > 0);
     }
 }

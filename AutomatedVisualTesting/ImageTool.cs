@@ -34,15 +34,6 @@ public static class ImageTool
             new float[] {0, 0, 0, 0, 1}
         });
 
-    //Create the brushes in varying intensities
-    static ImageTool()
-    {
-        for (int i = 0; i < 256; i++)
-        {
-            brushes[i] = new SolidBrush(Color.FromArgb(255, i, i / 3, i / 2));
-        }
-    }
-
     /// <summary>
     /// Gets the difference between two images as a percentage
     /// </summary>
@@ -50,7 +41,7 @@ public static class ImageTool
     /// <param name="img2">The image to compare to</param>
     /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 3.</param>
     /// <returns>The difference between the two images as a percentage</returns>
-    public static float PercentageDifference(this Image img1, Image img2, byte threshold = 0)
+    public static float Differences(this Image img1, Image img2, byte threshold = 0)
     {
         byte[,] differences = img1.GetDifferences(img2);
 
@@ -69,42 +60,18 @@ public static class ImageTool
     /// </summary>
     /// <param name="img1">The first image</param>
     /// <param name="img2">The image to compare with</param>
-    /// <param name="adjustColorSchemeToMaxDifferenceFound">Whether to adjust the color indicating maximum difference (usually 255) to the maximum difference found in this case.
-    /// E.g. if the maximum difference found is 12, then a true value in adjustColorSchemeToMaxDifferenceFound would result in 0 being black, 6 being dark pink, and 12 being bright pink.
-    /// A false value would still have differences of 255 as bright pink resulting in the 12 difference still being very dark.</param>
-    /// <param name="percentages">Whether to write percentages in each of the 255 squares (true) or the absolute value (false)</param>
     /// <returns>an image which displays the differences between two images</returns>
-    public static Bitmap GetDifferenceImage(this Image img1, Image img2, bool adjustColorSchemeToMaxDifferenceFound = true, bool absoluteText = true)
+    public static Bitmap GetDifferenceImage(this Image img1, Image img2)
     {
         //create a 16x16 tiles image with information about how much the two images differ
         int cellsize = 16;  //each tile is 16 pixels wide and high
         int width = img1.Width / divFactor, height = img1.Height / divFactor;
-
-        Bitmap bmp = new Bitmap(width * cellsize + 1, height * cellsize + 1); //16 blocks * 16 pixels + a borderpixel at left/bottom
-
-        Graphics g = Graphics.FromImage(bmp);
-        g.FillRectangle(Brushes.Black, 0, 0, bmp.Width, bmp.Height);
         byte[,] differences = img1.GetDifferences(img2);
         byte maxDifference = 255;
 
-        //if wanted - adjust the color scheme, by finding the new maximum difference
-        if (adjustColorSchemeToMaxDifferenceFound)
-        {
-            maxDifference = 0;
-            foreach (byte b in differences)
-            {
-                if (b > maxDifference)
-                {
-                    maxDifference = b;
-                }
-            }
-
-            if (maxDifference == 0)
-            {
-                maxDifference = 1;
-            }
-
-        }
+        //Create copy of original image , we will draw any differences on this
+        Bitmap originalImage = new Bitmap(img1, width * cellsize + 1, height * cellsize + 1);
+        Graphics g = Graphics.FromImage(originalImage);
 
         for (int y = 0; y < differences.GetLength(1); y++)
         {
@@ -112,28 +79,16 @@ public static class ImageTool
             {
                 byte cellValue = differences[x, y];
                 string cellText = null;
-
-                if (absoluteText)
-                {
-                    cellText = cellValue.ToString();
-                }
-                else
-                {
-                    cellText = string.Format("{0}%", (int)cellValue);
-                }
-
+                cellText = cellValue.ToString();
                 float percentageDifference = (float)differences[x, y] / maxDifference;
-                int colorIndex = (int)(255 * percentageDifference);
-
-                g.FillRectangle(brushes[colorIndex], x * cellsize, y * cellsize, cellsize, cellsize);
-                g.DrawRectangle(Pens.Blue, x * cellsize, y * cellsize, cellsize, cellsize);
-                SizeF size = g.MeasureString(cellText, DefaultFont);
-                g.DrawString(cellText, DefaultFont, Brushes.Black, x * cellsize + cellsize / 2 - size.Width / 2 + 1, y * cellsize + cellsize / 2 - size.Height / 2 + 1);
-                g.DrawString(cellText, DefaultFont, Brushes.White, x * cellsize + cellsize / 2 - size.Width / 2, y * cellsize + cellsize / 2 - size.Height / 2);
+                // If we find a difference
+                if (cellValue > 1)
+                {
+                    g.DrawRectangle(Pens.DarkMagenta, x * cellsize, y * cellsize, cellsize, cellsize);
+                }
             }
         }
-
-        return bmp;
+        return originalImage;
     }
 
     /// <summary>
@@ -170,7 +125,7 @@ public static class ImageTool
                 differences[x, y] = (byte)Math.Abs(thisOne.GetPixel(x, y).R - theOtherOne.GetPixel(x, y).R);
             }
         }
-        //differences.ToConsole();
+
         return differences;
     }
 
@@ -235,7 +190,7 @@ public static class ImageTool
     /// <param name="image2">The second image to compare</param>
     /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
     /// <returns>The difference between the two images as a percentage</returns>
-    public static int GetPercentageDifference(string image1, string image2, bool captureImageDifference = true)
+    public static int GetDifference(string image1, string image2)
     {
         String fileDirectory = "../../Screenshots/";
         if (CheckFile(fileDirectory + image1) && CheckFile(fileDirectory + image2))
@@ -243,16 +198,16 @@ public static class ImageTool
             Image img1 = Image.FromFile(fileDirectory + image1);
             Image img2 = Image.FromFile(fileDirectory + image2);
 
-            if (captureImageDifference == true)
+            float differencePercentage = img1.Differences(img2, 0);
+
+            if (differencePercentage > 0)
             {
+                // take snapshot of difference
                 CreateDifferenceImage(img1, img2);
             }
-
-            float differencePercentage = img1.PercentageDifference(img2, 0);
             return (int)(differencePercentage * 100);
         }
         else return -1;
-
     }
 
     /// <summary>
@@ -268,7 +223,6 @@ public static class ImageTool
         }
         return true;
     }
-
 
     /// <summary>
     /// Save screenshot of page loaded from url to Screenshots 
@@ -308,7 +262,7 @@ public static class ImageTool
     /// <param name="image2Path">The path to the second image</param>
     /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
     /// <returns>The difference between the two images as a percentage</returns>
-    public static int GetPercentageDifference(string image1, Uri url, bool captureImageDifference = true)
+    public static int GetDifference(string image1, Uri url)
     {
         String fileDirectory = "../../Screenshots/";
         if (CheckFile(fileDirectory + image1))
@@ -317,12 +271,12 @@ public static class ImageTool
             Image img1 = Image.FromFile(fileDirectory + image1);
             Image img2 = Image.FromStream(currentScreenshot);
 
-            if (captureImageDifference == true)
+            float differencePercentage = img1.Differences(img2, 0);
+            if(differencePercentage > 0 )
             {
                 CreateDifferenceImage(img1, img2);
             }
 
-            float differencePercentage = img1.PercentageDifference(img2, 0);
             return (int)(differencePercentage * 100);
         }
         else return -1;
