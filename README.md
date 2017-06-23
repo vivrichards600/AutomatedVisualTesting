@@ -1,61 +1,78 @@
 # Automated Visual Testing
 
-Lots of tests rely on Selenium WebDriver and similar tools to automate end to end testing. Whilst this ensures elements are displayed 'somewhere' on a page, they do not guarantee that elements are exactly where they should be! 
+
+
+![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/Screenshots/Chrome.Differences.png "Chrome Differences Screenshot")
+
+Lots of tests rely on Selenium WebDriver and similar tools to automate end to end testing. Whilst this ensures elements are displayed 'somewhere' on a page, they do not guarantee that elements are exactly where they should be and looking as expected! 
 
 Using this 'Visual' approach tests can execute a lot quicker and ensure elements are rendered how we expect them to be rathan than the typical approach of trying to find each element to ensure things have loaded on to a page.
 
 ## How it works 
-Once you are happy with the way each of your web pages look you take screenshots of each of the pages using the built in helper. Each time you make changes to your project then you can run these automated visual regression tests. Using Selenium we navigate to the web pages you specify (relating to the screenshots we captured) and take a new screenshot (which we hold in memory) and then compare the image in our local folder to the one we've just taken in memory to see if they differ. 
+Once you are happy with the way each of your web pages look you take screenshots of each of the pages using the built in helper. 
 
-You can change the acceptable percent of change to allow between images. When images differe a screenshot is taken and saved to the screenshots folder showing you where differences were detected.
-
-## Further info
-
-This is a work in progress and the code is just a quick and dirty way to get some automated visual testing done (it needs a bit of work!). Feel free to fork and improve this solution - I'd love any help with this idea.
-
-## How to use
-
-First we need to take screenshots of all the web pages we want to test are still visually the same. We do this by specifying the url of the page and a screenshot will then get saved to the Screenshots folder:
 
 ``` c#
  // Create initial screenshot of website used within regression tests later on
-        ImageTool.SaveScreenShotByUrl("http://www.google.com/");
+        SaveScreenShotByUrl("http://www.google.com/");
 ```
 
-As you develop your pages you will want to test to check if they are still displayed the way you expect them to. Next we create a test which references the expected screenshot and then give the url which represents the screenshot: 
+You can also specify which browser to use Chrome (used by default if no browser specified), IE or Firefox. 
+
+``` c#
+        SaveScreenShotByUrl("http://www.vivrichards.co.uk"); // same as specifying Browser.Chrome
+        SaveScreenShotByUrl("http://www.vivrichards.co.uk", Browser.Chrome);
+        SaveScreenShotByUrl("http://www.vivrichards.co.uk", Browser.IE);
+        SaveScreenShotByUrl("http://www.vivrichards.co.uk", Browser.Firefox);
+```
+![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/Screenshots/Chrome.png "Chrome Screenshot")
+
+Each time you make changes to your project then you can run automated visual regression tests. 
+
+Compare Image to an Image taken by visiting a url and held in memory:
 
 ``` c#
     [TestMethod]
-    public void DetectDifferenceBetweenImageAndUrl()
+    public void DetectDifferenceBetweenImageAndUrlChrome()
     {
         //Arrange
-        String image = "Google.png";
-        Uri url = new Uri("http://www.google.com/");
+        String image = "Chrome.png";
+        Uri url = new Uri("http://www.vivrichards.co.uk");
 
         //Act
-        int difference = ImageTool.GetPercentageDifference(image, url);
+        int difference = GetDifference(image, url);
 
         //Assert
         Assert.IsTrue(difference == 0); // do not allow any difference
-
     }
 ```
 
+If the above test fails then an image taken from visiting the url is saved into the screenshots folder as well as an image displaying the differences found.
 
-You also have the ability to reference two images already captured and check for differences: 
+You can also specify which browser to use Chrome (used by default if no browser specified), IE or Firefox. 
 
 ``` c#
-   [TestMethod]
-    public void DetectASinglePixelDifferenceBetweenTwoImagesTest()
+        int difference = GetDifference(image, url); // same as specifying Browser.Chrome
+        int difference = GetDifference(image, url, Browser.Chrome);
+        int difference = GetDifference(image, url, Browser.IE);
+        int difference = GetDifference(image, url, Browser.Firefox);    
+```
+
+Compare Image with another Image:
+
+``` c#
+    [TestMethod]
+    public void DetectDifferenceBetweenImages()
     {
         //Arrange
-        String image1 = "GooglePixel1.png";
-        String image2 = "GooglePixel2.png";
-
+        String image1 = "Chrome1.png";
+        String image2 = "Chrome2.png";
+        
         //Act
-        int difference = ImageTool.GetPercentageDifference(image1, image2);
+        int difference = GetDifference(image1, image2);
 
         //Assert
-        Assert.IsTrue(difference == 1); // find 1 pixel difference
+        Assert.IsTrue(difference == 0); // do not allow any difference
     }
 ```
+If the above test fails then an image displaying the differences is saved into the screenshots folder.
