@@ -2,15 +2,17 @@
 // .net based image comparison utillity which produces pixel matrix based comaprison
 // Capable of detecting a single pixel difference between images
 
-using System;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.IO;
-using System.Linq;
+using AutomatedVisualTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Support.UI;
+using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.IO;
 
 /// <summary>
 /// A class with extensionmethods for comparing images
@@ -25,14 +27,14 @@ public static class ImageTool
 
     //the colormatrix needed to grayscale an image
 
-    static readonly ColorMatrix ColorMatrix = new ColorMatrix(new float[][]
-        {
+    readonly static ColorMatrix ColorMatrix = new ColorMatrix(new float[][]
+       {
             new float[] {.3f, .3f, .3f, 0, 0},
             new float[] {.59f, .59f, .59f, 0, 0},
             new float[] {.11f, .11f, .11f, 0, 0},
             new float[] {0, 0, 0, 1, 0},
             new float[] {0, 0, 0, 0, 1}
-        });
+       });
 
     /// <summary>
     /// Gets the difference between two images as a percentage
@@ -44,7 +46,6 @@ public static class ImageTool
     public static float Differences(this Image img1, Image img2, byte threshold = 0)
     {
         byte[,] differences = img1.GetDifferences(img2);
-
         int diffPixels = 0;
 
         foreach (byte b in differences)
@@ -69,7 +70,6 @@ public static class ImageTool
         byte[,] differences = img1.GetDifferences(img2);
         byte maxDifference = 255;
 
-        //Create copy of original image , we will draw any differences on this
         Bitmap originalImage = new Bitmap(img1, width * cellsize + 1, height * cellsize + 1);
         Graphics g = Graphics.FromImage(originalImage);
 
@@ -81,8 +81,7 @@ public static class ImageTool
                 string cellText = null;
                 cellText = cellValue.ToString();
                 float percentageDifference = (float)differences[x, y] / maxDifference;
-                // If we find a difference
-                if (cellValue > 1)
+                if (cellValue > 0)
                 {
                     g.DrawRectangle(Pens.DarkMagenta, x * cellsize, y * cellsize, cellsize, cellsize);
                 }
@@ -96,10 +95,10 @@ public static class ImageTool
     /// </summary>
     /// <param name="img1">The first image to compare</param>
     /// <param name="img2">The second image to compare</param>
-    public static void CreateDifferenceImage(Image img1, Image img2)
+    public static void CreateDifferenceImage(Image img1, Image img2, string browser)
     {
         String fileDirectory = "../../Screenshots/";
-        img1.GetDifferenceImage(img2).Save(fileDirectory + "_diff.png");
+        img1.GetDifferenceImage(img2).Save(string.Format("{0}{1}Differences.png", fileDirectory, browser));
     }
 
     /// <summary>
@@ -116,8 +115,6 @@ public static class ImageTool
 
         byte[,] differences = new byte[width, height];
 
-        Console.WriteLine();
-
         for (int y = 0; y < height; y++)
         {
             for (int x = 0; x < width; x++)
@@ -125,7 +122,6 @@ public static class ImageTool
                 differences[x, y] = (byte)Math.Abs(thisOne.GetPixel(x, y).R - theOtherOne.GetPixel(x, y).R);
             }
         }
-
         return differences;
     }
 
@@ -193,7 +189,7 @@ public static class ImageTool
     public static int GetDifference(string image1, string image2)
     {
         String fileDirectory = "../../Screenshots/";
-        if (CheckFile(fileDirectory + image1) && CheckFile(fileDirectory + image2))
+        if (Common.CheckFile(fileDirectory + image1) && Common.CheckFile(fileDirectory + image2))
         {
             Image img1 = Image.FromFile(fileDirectory + image1);
             Image img2 = Image.FromFile(fileDirectory + image2);
@@ -203,55 +199,11 @@ public static class ImageTool
             if (differencePercentage > 0)
             {
                 // take snapshot of difference
-                CreateDifferenceImage(img1, img2);
+                CreateDifferenceImage(img1, img2, "TwoImages.");
             }
             return (int)(differencePercentage * 100);
         }
         else return -1;
-    }
-
-    /// <summary>
-    /// Check file path exists
-    /// </summary>
-    /// <param name="filePath">File path to check</param>
-    /// <returns></returns>
-    private static bool CheckFile(string filePath)
-    {
-        if (!File.Exists(filePath))
-        {
-            throw new FileNotFoundException("File '" + filePath + "' not found!");
-        }
-        return true;
-    }
-
-    /// <summary>
-    /// Save screenshot of page loaded from url to Screenshots 
-    /// folder in project using driver.Title as filename
-    /// </summary>
-    /// <param name="url">Webpage to navigate to</param>
-    public static void SaveScreenShotByUrl(string url)
-    {
-        //if (!Uri.IsWellFormedUriString(url, UriKind.Absolute)) throw new UriFormatException("Please check url provided is valid");
-
-        IWebDriver driver = new ChromeDriver();
-        driver.Navigate().GoToUrl(url);
-
-        Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
-
-        String pageTitle = driver.Title.ToString();
-        // TODO: Stick directory in a setting
-        String fileDirectory = "../../Screenshots/";
-        if (!Directory.Exists(fileDirectory))
-        {
-            // screenshot directory doesn't exist
-            driver.Close();
-            throw new IOException("Please check screenshots folder exists within test solution to save screenshots");
-        }
-
-        String fileName = string.Format("{0}{1}.png", fileDirectory, pageTitle);
-        ss.SaveAsFile(fileName, ImageFormat.Png);
-
-        driver.Close();
     }
 
     /// <summary>
@@ -262,24 +214,68 @@ public static class ImageTool
     /// <param name="image2Path">The path to the second image</param>
     /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
     /// <returns>The difference between the two images as a percentage</returns>
-    public static int GetDifference(string image1, Uri url)
+    public static int GetDifference(string image1, Uri url, Browser browser = Browser.Chrome)
     {
         String fileDirectory = "../../Screenshots/";
-        if (CheckFile(fileDirectory + image1))
+        if (Common.CheckFile(fileDirectory + image1))
         {
-            MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url));
+            MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url, browser));
             Image img1 = Image.FromFile(fileDirectory + image1);
             Image img2 = Image.FromStream(currentScreenshot);
 
             float differencePercentage = img1.Differences(img2, 0);
-            if(differencePercentage > 0 )
+            if (differencePercentage > 0)
             {
-                CreateDifferenceImage(img1, img2);
+                CreateDifferenceImage(img1, img2, browser.ToString() + ".");
+                img2.Save(string.Format("{0}{1}.ImageFromUrl.png", fileDirectory, browser.ToString()));// + "ImageFromUrl.png");
             }
 
             return (int)(differencePercentage * 100);
         }
         else return -1;
+    }
+    public enum Browser { Chrome, IE, Firefox };
+
+    /// <summary>
+    /// Save screenshot of page loaded from url to Screenshots folder in
+    /// project using specified web driver and using page Title as filename
+    /// </summary>
+    /// <param name="url">Webpage to navigate to</param>
+    /// <param name="browser">web browser to use</param>
+    public static void SaveScreenShotByUrl(string url, Browser browser = Browser.Chrome)
+    {
+        IWebDriver driver = null;
+        switch (browser)
+        {
+            case Browser.IE:
+                driver = new InternetExplorerDriver();
+                break;
+            case Browser.Firefox:
+                driver = new FirefoxDriver();
+                break;
+            default:
+                driver = new ChromeDriver();
+                break;
+        }
+
+        driver.Navigate().GoToUrl(url);
+        WaitForLoad(driver);
+        Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
+
+        String pageTitle = driver.Title.ToString();
+        // TODO: Stick directory in a setting
+        String fileDirectory = "../../Screenshots/";
+        if (!Directory.Exists(fileDirectory))
+        {
+            // screenshot directory doesn't exist
+            driver.Quit();
+            throw new IOException("Please check screenshots folder exists within test solution to save screenshots");
+        }
+
+        String fileName = string.Format("{0}{1}.png", fileDirectory, browser.ToString());
+        ss.SaveAsFile(fileName, ImageFormat.Png);
+
+        driver.Quit();
     }
 
     /// <summary>
@@ -287,17 +283,42 @@ public static class ImageTool
     /// </summary>
     /// <param name="url">Url to take an image of</param>
     /// <returns></returns>
-    private static byte[] GetScreenshotByUrl(Uri url)
+    public static byte[] GetScreenshotByUrl(Uri url, Browser browser = Browser.Chrome)
     {
-        IWebDriver driver = new ChromeDriver();
+        IWebDriver driver = null;
+        switch (browser)
+        {
+            case Browser.IE:
+                driver = new InternetExplorerDriver();
+                break;
+            case Browser.Firefox:
+                driver = new FirefoxDriver();
+                break;
+            default:
+                driver = new ChromeDriver();
+                break;
+        }
         driver.Navigate().GoToUrl(url.ToString());
+        WaitForLoad(driver);
 
         Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
         string screenshot = ss.AsBase64EncodedString;
         byte[] bytes = Convert.FromBase64String(screenshot);
 
-        driver.Close();
+        driver.Quit();
 
         return bytes;
     }
+
+    /// <summary>
+    /// Wait for page to load
+    /// </summary>
+    /// <param name="driver">web driver</param>
+    public static void WaitForLoad(this IWebDriver driver, int timeoutSec = 60)
+    {
+        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+        WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, timeoutSec));
+        wait.Until(wd => js.ExecuteScript("return document.readyState").ToString() == "complete");
+    }
+
 }
