@@ -72,7 +72,7 @@ public class Tests
         //Arrange
         String image1 = "Chrome1.png";
         String image2 = "Chrome2.png";
-        
+
         //Act
         int difference = GetDifference(image1, image2);
 

@@ -3,6 +3,7 @@
 // Capable of detecting a single pixel difference between images
 
 using AutomatedVisualTesting;
+using Ghostscript.NET;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -259,6 +260,7 @@ public static class ImageTool
         }
 
         driver.Navigate().GoToUrl(url);
+        //driver.Manage().Window.Maximize();// Size = new Size(480, 320);
         WaitForLoad(driver);
         Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
 
@@ -299,6 +301,7 @@ public static class ImageTool
                 break;
         }
         driver.Navigate().GoToUrl(url.ToString());
+        //driver.Manage().Window.Maximize();//Size = new Size(480,320);
         WaitForLoad(driver);
 
         Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
@@ -320,5 +323,4 @@ public static class ImageTool
         WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, timeoutSec));
         wait.Until(wd => js.ExecuteScript("return document.readyState").ToString() == "complete");
     }
-
 }

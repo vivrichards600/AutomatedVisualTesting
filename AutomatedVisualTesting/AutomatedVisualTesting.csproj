@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ghostscript.NET, Version=1.2.1.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
+      <HintPath>packages\Ghostscript.NET.1.2.1\lib\net40\Ghostscript.NET.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="itextsharp">
       <HintPath>..\..\Temp\itextsharp.dll</HintPath>
     </Reference>
@@ -68,10 +72,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="dummyAssets\1.pdf" />
-    <None Include="dummyAssets\2.pdf" />
-    <None Include="dummyAssets\3.pdf" />
-    <None Include="dummyAssets\4.pdf" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
