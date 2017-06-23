@@ -99,7 +99,7 @@ public static class ImageTool
     public static void CreateDifferenceImage(Image img1, Image img2)
     {
         String fileDirectory = "../../Screenshots/";
-        img1.GetDifferenceImage(img2).Save(fileDirectory + "_diff.png");
+        img1.GetDifferenceImage(img2).Save(fileDirectory + "Differences.png");
     }
 
     /// <summary>
@@ -275,6 +275,7 @@ public static class ImageTool
             if(differencePercentage > 0 )
             {
                 CreateDifferenceImage(img1, img2);
+                img2.Save(fileDirectory + "ImageFromUrl.png");
             }
 
             return (int)(differencePercentage * 100);
