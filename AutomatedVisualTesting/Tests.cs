@@ -65,18 +65,4 @@ public class Tests
         //Assert
         Assert.IsTrue(difference == 0); // do not allow any difference
     }
-
-    [TestMethod]
-    public void DetectDifferenceBetweenTwoImages()
-    {
-        //Arrange
-        String image1 = "Chrome1.png";
-        String image2 = "Chrome2.png";
-
-        //Act
-        int difference = GetDifference(image1, image2);
-
-        //Assert
-        Assert.IsTrue(difference == 0); // do not allow any difference
-    }
 }

@@ -53,7 +53,6 @@ public static class ImageTool
         {
             if (b > threshold) { diffPixels++; }
         }
-
         return diffPixels / 256f;
     }
 
@@ -99,11 +98,7 @@ public static class ImageTool
     public static void CreateDifferenceImage(Image img1, Image img2, string browser)
     {
         String fileDirectory = "../../Screenshots/";
-<<<<<<< HEAD
         img1.GetDifferenceImage(img2).Save(string.Format("{0}{1}Differences.png", fileDirectory, browser));
-=======
-        img1.GetDifferenceImage(img2).Save(fileDirectory + "Differences.png");
->>>>>>> 9035a23527591ee6fef37c67ad941cfd3f54b8ad
     }
 
     /// <summary>
@@ -264,7 +259,6 @@ public static class ImageTool
         }
 
         driver.Navigate().GoToUrl(url);
-        //driver.Manage().Window.Maximize();// Size = new Size(480, 320);
         WaitForLoad(driver);
         Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
 
@@ -281,40 +275,7 @@ public static class ImageTool
         String fileName = string.Format("{0}{1}.png", fileDirectory, browser.ToString());
         ss.SaveAsFile(fileName, ImageFormat.Png);
 
-<<<<<<< HEAD
         driver.Quit();
-=======
-        driver.Close();
-    }
-
-    /// <summary>
-    /// Gets the difference between two images as a percentage
-    /// </summary>
-    /// <returns>The difference between the two images as a percentage</returns>
-    /// <param name="image1Path">The path to the first image</param>
-    /// <param name="image2Path">The path to the second image</param>
-    /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
-    /// <returns>The difference between the two images as a percentage</returns>
-    public static int GetDifference(string image1, Uri url)
-    {
-        String fileDirectory = "../../Screenshots/";
-        if (CheckFile(fileDirectory + image1))
-        {
-            MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url));
-            Image img1 = Image.FromFile(fileDirectory + image1);
-            Image img2 = Image.FromStream(currentScreenshot);
-
-            float differencePercentage = img1.Differences(img2, 0);
-            if(differencePercentage > 0 )
-            {
-                CreateDifferenceImage(img1, img2);
-                img2.Save(fileDirectory + "ImageFromUrl.png");
-            }
-
-            return (int)(differencePercentage * 100);
-        }
-        else return -1;
->>>>>>> 9035a23527591ee6fef37c67ad941cfd3f54b8ad
     }
 
     /// <summary>
@@ -338,7 +299,6 @@ public static class ImageTool
                 break;
         }
         driver.Navigate().GoToUrl(url.ToString());
-        //driver.Manage().Window.Maximize();//Size = new Size(480,320);
         WaitForLoad(driver);
 
         Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
@@ -349,7 +309,6 @@ public static class ImageTool
 
         return bytes;
     }
-<<<<<<< HEAD
 
     /// <summary>
     /// Wait for page to load
@@ -362,6 +321,3 @@ public static class ImageTool
         wait.Until(wd => js.ExecuteScript("return document.readyState").ToString() == "complete");
     }
 }
-=======
-}
->>>>>>> 9035a23527591ee6fef37c67ad941cfd3f54b8ad
