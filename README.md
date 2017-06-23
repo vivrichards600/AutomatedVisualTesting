@@ -6,7 +6,9 @@
 
 Lots of tests rely on Selenium WebDriver and similar tools to automate end to end testing. Whilst this ensures elements are displayed 'somewhere' on a page, they do not guarantee that elements are exactly where they should be and looking as expected! 
 
-Using this 'Visual' approach tests can execute a lot quicker and ensure elements are rendered how we expect them to be rathan than the typical approach of trying to find each element to ensure things have loaded on to a page.
+Using this 'Visual' approach tests can execute a lot quicker and ensure elements are rendered how we expect them to be rathan than the typical approach of trying to find each element to ensure things have loaded on to a page. 
+
+When unexpected differences are found, the original image is copied and pink squares drawn around any areas where changes were found. This image is then automatically saved locally to the screenshots folder to help you quickly identify what changed.
 
 ## How it works 
 Once you are happy with the way each of your web pages look you take screenshots of each of the pages using the built in helper. 
