@@ -35,12 +35,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ghostscript.NET, Version=1.2.1.0, Culture=neutral, PublicKeyToken=f85051de34525b59, processorArchitecture=MSIL">
-      <HintPath>packages\Ghostscript.NET.1.2.1\lib\net40\Ghostscript.NET.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="itextsharp">
-      <HintPath>..\..\Temp\itextsharp.dll</HintPath>
+    <Reference Include="SautinSoft.PdfFocus">
+      <HintPath>..\..\..\..\..\..\temp\Bin\Net 4.0\SautinSoft.PdfFocus.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -73,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="TestData\1.pdf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="chromedriver.exe">
@@ -84,10 +81,25 @@
     <Content Include="IEDriverServer.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="TestData\1.pdf.1.png" />
+    <Content Include="TestData\1.pdf.2.png" />
+    <Content Include="TestData\1.pdf.3.png" />
+    <Content Include="TestData\1.pdf.4.png" />
+    <Content Include="TestData\1.pdf.5.png" />
+    <Content Include="TestData\1.pdf.Differences.png" />
+    <Content Include="TestData\1.pdf.ImageFromPdf.png" />
+    <Content Include="TestData\1.pdf.page1Differences.png" />
+    <Content Include="TestData\1.pdf.page2Differences.png" />
+    <Content Include="TestData\1.png" />
+    <Content Include="TestData\Chrome.Differences.png" />
+    <Content Include="TestData\Chrome.ImageFromUrl.png" />
+    <Content Include="TestData\Chrome.png" />
+    <Content Include="TestData\Firefox.Differences.png" />
+    <Content Include="TestData\Firefox.ImageFromUrl.png" />
+    <Content Include="TestData\Firefox.png" />
+    <Content Include="TestData\TwoImages.Differences.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Screenshots\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

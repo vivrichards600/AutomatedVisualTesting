@@ -3,7 +3,6 @@
 // Capable of detecting a single pixel difference between images
 
 using AutomatedVisualTesting;
-using Ghostscript.NET;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -15,9 +14,6 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 
-/// <summary>
-/// A class with extensionmethods for comparing images
-/// </summary>
 public static class ImageTool
 {
     //the font to use for the DifferenceImages
@@ -95,10 +91,11 @@ public static class ImageTool
     /// </summary>
     /// <param name="img1">The first image to compare</param>
     /// <param name="img2">The second image to compare</param>
-    public static void CreateDifferenceImage(Image img1, Image img2, string browser)
+    /// <param name="info">details to help describe method of comparison</param>
+    public static void CreateDifferenceImage(Image img1, Image img2, string info)
     {
-        String fileDirectory = "../../Screenshots/";
-        img1.GetDifferenceImage(img2).Save(string.Format("{0}{1}Differences.png", fileDirectory, browser));
+        String fileDirectory = "../../TestData/";
+        img1.GetDifferenceImage(img2).Save(string.Format("{0}{1}Differences.png", fileDirectory, info));
     }
 
     /// <summary>
@@ -188,7 +185,7 @@ public static class ImageTool
     /// <returns>The difference between the two images as a percentage</returns>
     public static int GetDifference(string image1, string image2)
     {
-        String fileDirectory = "../../Screenshots/";
+        String fileDirectory = "../../TestData/";
         if (Common.CheckFile(fileDirectory + image1) && Common.CheckFile(fileDirectory + image2))
         {
             Image img1 = Image.FromFile(fileDirectory + image1);
@@ -216,7 +213,7 @@ public static class ImageTool
     /// <returns>The difference between the two images as a percentage</returns>
     public static int GetDifference(string image1, Uri url, Browser browser = Browser.Chrome)
     {
-        String fileDirectory = "../../Screenshots/";
+        String fileDirectory = "../../TestData/";
         if (Common.CheckFile(fileDirectory + image1))
         {
             MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url, browser));
@@ -234,6 +231,7 @@ public static class ImageTool
         }
         else return -1;
     }
+
     public enum Browser { Chrome, IE, Firefox };
 
     /// <summary>
@@ -264,7 +262,7 @@ public static class ImageTool
 
         String pageTitle = driver.Title.ToString();
         // TODO: Stick directory in a setting
-        String fileDirectory = "../../Screenshots/";
+        String fileDirectory = "../../TestData/";
         if (!Directory.Exists(fileDirectory))
         {
             // screenshot directory doesn't exist
@@ -319,5 +317,74 @@ public static class ImageTool
         IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
         WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, timeoutSec));
         wait.Until(wd => js.ExecuteScript("return document.readyState").ToString() == "complete");
+    }
+
+    /// <summary>
+    /// Convert a pdf pages in to images
+    /// </summary>
+    /// <param name="filename">filename of pdf to save as images</param>
+    public static void SavePdfToImage(string filename)
+    {
+        SautinSoft.PdfFocus f = new SautinSoft.PdfFocus();
+        f.OpenPdf("../../TestData/" + filename);
+
+        if (f.PageCount > 0)
+        {
+            f.ImageOptions.Dpi = 300;
+
+            for (int p = 1; p < f.PageCount + 1; p = p + 1)
+            {
+                Image img = f.ToDrawingImage(p);
+                img.Save(string.Format("../../TestData/{0}.{1}.png", filename, p));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Convert specified pdf page in to image
+    /// </summary>
+    /// <param name="filename">filename of pdf</param>
+    /// <param name="page">page of pdf</param>
+    /// <returns>Pdf page as a png image</returns>
+    public static Image GetPdfPageAsImage(string filename, int page)
+    {
+        SautinSoft.PdfFocus f = new SautinSoft.PdfFocus();
+        f.OpenPdf("../../TestData/" + filename);
+
+        if (f.PageCount > page)
+        {
+            f.ImageOptions.Dpi = 300;
+            return f.ToDrawingImage(page);
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Get difference between image and a page of a pdf which is converted into 
+    /// an image and held in memory to compare
+    /// </summary>
+    /// <param name="image1">image to compare</param>
+    /// <param name="pdf">pdf file to use</param>
+    /// <param name="page">page of pdf to convert</param>
+    /// <returns>Differences between an image and an image taken from a specified pdf page</returns>
+    public static int GetDifference(string image1, string pdf, int page)
+    {
+        String fileDirectory = "../../TestData/";
+        if (Common.CheckFile(fileDirectory + image1))
+        {
+           // MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url, browser));
+            Image img1 = Image.FromFile(fileDirectory + image1);
+            Image img2 = GetPdfPageAsImage(pdf, page);
+
+            float differencePercentage = img1.Differences(img2, 0);
+            if (differencePercentage > 0)
+            {
+                CreateDifferenceImage(img1, img2, pdf + ".page" + page);
+                img2.Save(string.Format("{0}{1}.ImageFromPdf.png", fileDirectory,pdf));// + "ImageFromUrl.png");
+            }
+
+            return (int)(differencePercentage * 100);
+        }
+        else return -1;
     }
 }
