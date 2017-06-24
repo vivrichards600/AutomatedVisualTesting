@@ -99,3 +99,5 @@ You can also specify which browser to use Chrome (used by default if no browser 
 ## Debugging when tests fail
 
 When your tets fail because results were not as expected, the framework will take screenshots of the expected image (regardless where you check via url, pdf page etc), it will also produce an image displaying where the differences were found and place these images in the TestData foler.
+
+![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/diff.png "Chrome Differences Screenshot")
