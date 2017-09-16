@@ -13,7 +13,9 @@ It is also necessary sometimes to check contents of files, which can be quite ti
 ## How it works 
 
 ### Base images for websites
-Once you are happy with the way each of your web pages look you take screenshots of each of the pages using the built in helper. 
+Once you are happy with the way each of your web pages look you simply use this framework whilst writing your tests. The firt time you run the tests the base images do not exist, this framework will alert you to tell you this and then continue to take the base images for you automatically - there is a helper if you would like to manually take base images but it isn't required. 
+
+To manually take base image if you want to overwrite base images:
 
 ``` c#
  // Create initial screenshot of website used within regression tests later on
@@ -30,7 +32,7 @@ You can also specify which browser to use Chrome (used by default if no browser 
 ```
 
 ### Base images for files
-Once you are happy with the way your pdf pages look you convert each page in to images using just one line of code using the built in helper. 
+nce you are happy with the way your pdf pages look you convert each page in to images using just one line of code using the built in helper. 
 
 ``` c#
       SavePdfToImage("1.pdf");
@@ -102,4 +104,4 @@ You can also specify which browser to use Chrome (used by default if no browser 
 ```
 ## Debugging when tests fail
 
-When your tets fail because results were not as expected, the framework will take screenshots of the expected image (regardless where you check via url, pdf page etc), it will also produce an image displaying where the differences were found and place these images in the TestData foler.
+When your tets fail because results were not as expected, the framework will take screenshots of the expected image (regardless where you check via url, pdf page etc), it will also produce an image displaying where the differences were found and place these images in the TestData folder.
