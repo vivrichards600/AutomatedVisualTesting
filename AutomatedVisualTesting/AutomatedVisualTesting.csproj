@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Aspose.Pdf, Version=17.6.0.0, Culture=neutral, PublicKeyToken=716fcc553a201e56, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\temp\Bin\net4.0\Aspose.Pdf.dll</HintPath>
+    </Reference>
     <Reference Include="SautinSoft.PdfFocus">
       <HintPath>..\..\..\..\..\..\temp\Bin\Net 4.0\SautinSoft.PdfFocus.dll</HintPath>
     </Reference>
@@ -62,44 +66,29 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Common.cs" />
-    <Compile Include="ImageTool.cs" />
-    <Compile Include="Tests.cs" />
+    <Compile Include="Utilities\ConvertPdf.cs" />
+    <Compile Include="Utilities\ImageComparison.cs" />
+    <Compile Include="Utilities\SeleniumDriver.cs" />
+    <Compile Include="ExampleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="TestData\1.pdf" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="chromedriver.exe">
+    <Content Include="Drivers\chromedriver.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="geckodriver.exe">
+    <Content Include="Drivers\geckodriver.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="IEDriverServer.exe">
+    <Content Include="Drivers\IEDriverServer.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="TestData\1.pdf.1.png" />
-    <Content Include="TestData\1.pdf.2.png" />
-    <Content Include="TestData\1.pdf.3.png" />
-    <Content Include="TestData\1.pdf.4.png" />
-    <Content Include="TestData\1.pdf.5.png" />
-    <Content Include="TestData\1.pdf.Differences.png" />
-    <Content Include="TestData\1.pdf.ImageFromPdf.png" />
-    <Content Include="TestData\1.pdf.page1Differences.png" />
-    <Content Include="TestData\1.pdf.page2Differences.png" />
-    <Content Include="TestData\1.png" />
-    <Content Include="TestData\Chrome.Differences.png" />
-    <Content Include="TestData\Chrome.ImageFromUrl.png" />
-    <Content Include="TestData\Chrome.png" />
-    <Content Include="TestData\Firefox.Differences.png" />
-    <Content Include="TestData\Firefox.ImageFromUrl.png" />
-    <Content Include="TestData\Firefox.png" />
-    <Content Include="TestData\TwoImages.Differences.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="TestData\" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
