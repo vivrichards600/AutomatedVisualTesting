@@ -2,9 +2,7 @@
 // .net based image comparison utillity which produces pixel matrix based comaprison
 // Capable of detecting a single pixel difference between images
 
-// TODO:
-// Currently not efficient, loads the image each time it checks a byte, need to refactor this
-// Code cleanup/refactor
+// TODO: Currently not efficient, loads the image each time it checks a byte, need to refactor this
 
 using System;
 using System.Diagnostics;
@@ -12,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using static System.Configuration.ConfigurationSettings;
 
 namespace AutomatedVisualTesting.Utilities
 {
@@ -86,17 +85,18 @@ namespace AutomatedVisualTesting.Utilities
         /// <param name="img2">The second image to compare</param>
         public static void CreateDifferenceImage(Image img1, Image img2)
         {
+            string OutputDirectory = AppSettings.Get("OutputDirectory");
             // Save difference image
             string differencesFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-Differences.png";
-            img2.GetDifferenceImage(img1).Save(@"C:\Temp\" + differencesFilename);
+            img2.GetDifferenceImage(img1).Save($"{OutputDirectory}{differencesFilename}");
 
-            Debug.WriteLine(@"-> Unexpected difference(s) found");
-            Debug.WriteLine(@"-> Logging differences screenshot to: - file:///C:\Temp\" + differencesFilename);
+            Debug.WriteLine("-> Unexpected difference(s) found");
+            Debug.WriteLine(@"-> Logging differences screenshot to: - file:///" + OutputDirectory + differencesFilename);
 
             // Save copy of actual image
             string actualImageFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-ActualImage.png";
-            img2.Save(@"C:\Temp\" + actualImageFilename);
-            Debug.WriteLine(@"-> Logging actual screenshot to: - file:///C:\Temp\" + actualImageFilename);
+            img2.Save($"{OutputDirectory}{actualImageFilename}");
+            Debug.WriteLine(@"-> Logging actual screenshot to: - file:///" + OutputDirectory + actualImageFilename);
         }
 
         /// <summary>
@@ -110,9 +110,7 @@ namespace AutomatedVisualTesting.Utilities
             int width = img1.Width / DivFactor, height = img1.Height / DivFactor;
             Bitmap thisOne = (Bitmap)img1.Resize(width, height).GetGrayScaleVersion();
             Bitmap theOtherOne = (Bitmap)img2.Resize(width, height).GetGrayScaleVersion();
-
             byte[,] differences = new byte[width, height];
-
             for (int y = 0; y < height; y++)
             {
                 for (int x = 0; x < width; x++)
@@ -173,52 +171,28 @@ namespace AutomatedVisualTesting.Utilities
             return smallVersion;
         }
 
-        ///// <summary>
-        ///// Gets the difference between two images as a percentage
-        ///// </summary>
-        ///// <returns>The difference between the two images as a percentage</returns>
-        ///// <param name="image1">The first image to compare</param>
-        ///// <param name="image2">The second image to compare</param>
-        ///// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
-        ///// <returns>The difference between the two images as a percentage</returns>
-        //public static int GetDifference(string firstImage, string secondImage)
-        //{
-        //    String fileDirectory = "../../TestData/";
-        //    // Ensure both images exist
-        //    if (File.Exists(fileDirectory + firstImage) && File.Exists(fileDirectory + secondImage))
-        //    {
-        //        Image img1 = Image.FromFile(fileDirectory + firstImage);
-        //        Image img2 = Image.FromFile(fileDirectory + secondImage);
-
-        //        float differencePercentage = img1.Differences(img2, 0);
-
-        //        if (differencePercentage > 0)
-        //        {
-        //            // take snapshot of difference
-        //            CreateDifferenceImage(img1, img2, "TwoImages.");
-        //        }
-        //        return (int)(differencePercentage * 100);
-        //    }
-        //    else return -1;
-        //}
+        /// <summary>
+        /// Get difference between base image of selected element and screenshot of specified element using the browser specified
+        /// </summary>
+        /// <param name="imageFileName">Base image file name</param>
+        /// <param name="url">url to navigate to</param>
+        /// <param name="elementSelector">element to compare</param>
+        /// <param name="browser">Browser to use</param>
+        /// <returns></returns>
         public static int GetDifference(string imageFileName, string url, string elementSelector, SeleniumDriver.Browser browser = SeleniumDriver.Browser.Chrome)
         {
-            String fileDirectory = "../../TestData/";
             MemoryStream currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(url, elementSelector, browser));
             Image imageFromUrl = Image.FromStream(currentScreenshot);
-
+            string TestDataDirectory = AppSettings.Get("TestDataDirectory");
             // first time we run a test we won't have a base image so create one and alert user in output window
-            if (!File.Exists(fileDirectory + imageFileName))
+            if (!File.Exists(TestDataDirectory + imageFileName))
             {
-                imageFromUrl.Save(fileDirectory + imageFileName);
-
+                imageFromUrl.Save(TestDataDirectory + imageFileName);
                 Debug.WriteLine(@"-> No base image found for - " + imageFileName);
                 Debug.WriteLine(@"-> Base image created - " + imageFileName);
-
             }
 
-            Image baseImage = Image.FromFile(fileDirectory + imageFileName);
-
+            Image baseImage = Image.FromFile(TestDataDirectory + imageFileName);
             float differencePercentage = baseImage.Differences(imageFromUrl, 0);
             if (differencePercentage > 0)
             {
@@ -237,22 +211,18 @@ namespace AutomatedVisualTesting.Utilities
         /// <returns></returns>
         public static int GetDifference(string imageFileName, string url, SeleniumDriver.Browser browser = SeleniumDriver.Browser.Chrome)
         {
-            String fileDirectory = "../../TestData/";
             MemoryStream currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(url, browser));
             Image imageFromUrl = Image.FromStream(currentScreenshot);
+            string TestDataDirectory = AppSettings.Get("TestDataDirectory");
 
             // first time we run a test we won't have a base image so create one and alert user in output window
-            if (!File.Exists(fileDirectory + imageFileName))
+            if (!File.Exists(TestDataDirectory + imageFileName))
             {
-                imageFromUrl.Save(fileDirectory + imageFileName);
-
+                imageFromUrl.Save(TestDataDirectory + imageFileName);
                 Debug.WriteLine(@"-> No base image found for - " + imageFileName);
                 Debug.WriteLine(@"-> Base image created - " + imageFileName);
-
             }
-
-            Image baseImage = Image.FromFile(fileDirectory + imageFileName);
-
+            Image baseImage = Image.FromFile(TestDataDirectory + imageFileName);
             float differencePercentage = baseImage.Differences(imageFromUrl, 0);
             if (differencePercentage > 0)
             {
@@ -272,20 +242,18 @@ namespace AutomatedVisualTesting.Utilities
         /// <returns>Differences between an image and an image taken from a specified pdf page</returns>
         public static int GetDifference(string baseImage, string pdf, int page)
         {
-            String fileDirectory = "../../TestData/BaseImages";
-            if (File.Exists(fileDirectory + baseImage))
+            string TestDataDirectory = AppSettings.Get("TestDataDirectory");
+            if (File.Exists(TestDataDirectory + baseImage))
             {
                 // MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url, browser));
-                Image img1 = Image.FromFile(fileDirectory + baseImage);
+                Image img1 = Image.FromFile(TestDataDirectory + baseImage);
                 Image img2 = ConvertPdf.GetPdfPageAsImage(pdf, page);
-
                 float differencePercentage = img1.Differences(img2, 0);
                 if (differencePercentage > 0)
                 {
                     CreateDifferenceImage(img1, img2);
-                    img2.Save($"{fileDirectory}{pdf}.ImageFromPdf.png");
+                    img2.Save($"{TestDataDirectory}{pdf}.ImageFromPdf.png");
                 }
-
                 return (int)(differencePercentage * 100);
             }
             else return -1;

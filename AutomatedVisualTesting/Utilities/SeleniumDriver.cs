@@ -7,6 +7,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
+using static System.Configuration.ConfigurationSettings;
 
 namespace AutomatedVisualTesting.Utilities
 {
@@ -74,19 +75,16 @@ namespace AutomatedVisualTesting.Utilities
             SetDriver(browser);
             LoadUrl(url);
 
+            string TestDataDirectory = AppSettings.Get("TestDataDirectory");
             var ss = ((ITakesScreenshot) _driver).GetScreenshot();
-            // TODO: Stick directory in a setting
-            var fileDirectory = "../../TestData/";
-            if (!Directory.Exists(fileDirectory))
+            if (!Directory.Exists(TestDataDirectory))
             {
                 // screenshot directory doesn't exist
                 _driver.Quit();
                 throw new IOException("Please check screenshots folder exists within test solution to save screenshots");
             }
-
-            string fileName = $"{fileDirectory}{browser}.png";
+            string fileName = $"{TestDataDirectory}{browser}.png";
             ss.SaveAsFile(fileName, ImageFormat.Png);
-
             _driver.Quit();
         }
 
@@ -103,6 +101,7 @@ namespace AutomatedVisualTesting.Utilities
             SetDriver(browser);
             LoadUrl(url);
 
+            string TestDataDirectory = AppSettings.Get("TestDataDirectory");
             //find the element! - 
             //TODO: Add error catching and magic selector so can specify id, tag or css and it will find first instance? If more than one instance take photos of each!?
             var element = _driver.FindElement(By.CssSelector(elementSelector));
@@ -112,15 +111,13 @@ namespace AutomatedVisualTesting.Utilities
                 element.Size.Height);
             screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
 
-            // TODO: Stick directory in a setting
-            var fileDirectory = "../../TestData/";
-            if (!Directory.Exists(fileDirectory))
+            if (!Directory.Exists(TestDataDirectory))
             {
                 // screenshot directory doesn't exist
                 _driver.Quit();
                 throw new IOException("Please check screenshots folder exists within test solution to save screenshots");
             }
-            string fileName = $"{fileDirectory}{browser}.png";
+            string fileName = $"{TestDataDirectory}{browser}.png";
             screenshot.Save(fileName, ImageFormat.Png);
             _driver.Quit();
         }

@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using static System.Configuration.ConfigurationSettings;
 
 namespace AutomatedVisualTesting.Utilities
 {
@@ -10,15 +11,16 @@ namespace AutomatedVisualTesting.Utilities
         /// <param name="filename">filename of pdf to save as images</param>
         public static void SavePdfToImage(string filename)
         {
+            string TestDataDirectory = AppSettings.Get("TestDataDirectory");
             SautinSoft.PdfFocus f = new SautinSoft.PdfFocus();
-            f.OpenPdf("../../TestData/" + filename);
+            f.OpenPdf($"{TestDataDirectory}{filename}");
             if (f.PageCount > 0)
             {
                 f.ImageOptions.Dpi = 300;
                 for (int p = 1; p < f.PageCount + 1; p = p + 1)
                 {
                     Image img = f.ToDrawingImage(p);
-                    img.Save($"../../TestData/{filename}.{p}.png");
+                    img.Save($"{TestDataDirectory}{filename}.{p}.png");
                 }
             }
         }
@@ -31,8 +33,9 @@ namespace AutomatedVisualTesting.Utilities
         /// <returns>Pdf page as a png image</returns>
         public static Image GetPdfPageAsImage(string filename, int page)
         {
+            string TestDataDirectory = AppSettings.Get("TestDataDirectory");
             SautinSoft.PdfFocus f = new SautinSoft.PdfFocus();
-            f.OpenPdf("../../TestData/" + filename);
+            f.OpenPdf($"{TestDataDirectory}{filename}");
             if (f.PageCount > page)
             {
                 f.ImageOptions.Dpi = 300;
