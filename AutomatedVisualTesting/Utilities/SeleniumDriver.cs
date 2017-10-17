@@ -173,7 +173,7 @@ namespace AutomatedVisualTesting.Utilities
             var element = _driver.FindElement(By.Id(elementSelector));
             if (!element.Displayed)
                 element = _driver.FindElement(By.CssSelector(elementSelector));
-          
+
             var byteArray = ((ITakesScreenshot) _driver).GetScreenshot().AsByteArray;
             var screenshot = new Bitmap(new MemoryStream(byteArray));
             var croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width,
