@@ -144,5 +144,10 @@ The height to set the web driver window
     <add key="DriverWidth" value="768" /> 
 ```
 
+## TODOs
+There are a number of things I want to add over the next few months - please feel free to get involved in the project!
 
+* The ability to blanket over dynamic elements
+* Providing a dashboard for diff images and various test info
+* Storage options - AWS/ Google / Local - set in config?
    
