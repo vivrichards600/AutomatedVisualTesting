@@ -136,12 +136,12 @@ The path to store difference and actual images to
 
 The width to set the web driver window
 ``` xml
-    <add key="DriverWidth" value="C:\Temp\" /> 
+    <add key="DriverWidth" value="1024" /> 
 ```
 
 The height to set the web driver window
 ``` xml
-    <add key="DriverWidth" value="C:\Temp\" /> 
+    <add key="DriverWidth" value="768" /> 
 ```
 
 
