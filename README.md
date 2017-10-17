@@ -18,16 +18,21 @@ Once you are happy with how a particular area or how the whole of your web pages
 To manually take a base image of a web page:
 
 ``` c#
- // Create initial screenshot of website used within regression tests later on
+ // Create base image of web page
         SaveScreenShotByUrl("http://www.google.com/");
 ```
 
-To manually take a base image of a particular element or area or a web page:
+
+![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabase.png "Web Page Screenshot")
+
+To manually take a base image of a particular element or area or a web page (specify Id or CssSelector):
 ``` c#
  // Create initial screenshot of website used within regression tests later on
         SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", ".table"); // take base image by using css selector
         SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", "table"); // take base image by using ID selector
 ```
+
+![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/Table.png "Element Screenshot")
 
 You can also specify which browser to use: Chrome (used by default if no browser specified), IE or Firefox. 
 
