@@ -4,6 +4,7 @@ using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
 using OpenQA.Selenium.Support.UI;
 using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
@@ -52,9 +53,9 @@ public static class SeleniumDriver
 
         driver.Quit();
     }
-    
+
     //public static void SaveElementScreenShotByUrl(string url, IWebElement element, Browser browser = Browser.Chrome)
-   public static void SaveElementScreenShotByUrl(string url, string cssSelector, Browser browser = Browser.Chrome)
+    public static void SaveElementScreenShotByUrl(string url, string elementSelector, Browser browser = Browser.Chrome)
     {
         IWebDriver driver = null;
         switch (browser)
@@ -74,7 +75,7 @@ public static class SeleniumDriver
         WaitForLoad(driver);
 
         //find the element! - TODO: Add error catching and magic selector so can specify id, tag or css and it will find first instance? If more than one instance take photos of each!?
-        IWebElement element = driver.FindElement(By.CssSelector(cssSelector));
+        IWebElement element = driver.FindElement(By.CssSelector(elementSelector));
 
         Byte[] byteArray = ((ITakesScreenshot)driver).GetScreenshot().AsByteArray;
         System.Drawing.Bitmap screenshot = new System.Drawing.Bitmap(new System.IO.MemoryStream(byteArray));
@@ -99,17 +100,49 @@ public static class SeleniumDriver
 
 
 
+    /// <summary>
+    /// Create image of website for the given url
+    /// </summary>
+    /// <param name="url">Url to take an image of</param>
+    /// <returns></returns>
+    public static byte[] GetScreenshotByUrl(string url, string elementSelector, Browser browser = Browser.Chrome)
+    {
+        IWebDriver driver = null;
+        switch (browser)
+        {
+            case Browser.IE:
+                driver = new InternetExplorerDriver();
+                break;
+            case Browser.Firefox:
+                driver = new FirefoxDriver();
+                break;
+            default:
+                driver = new ChromeDriver();
+                break;
+        }
+        driver.Navigate().GoToUrl(url.ToString());
+        WaitForLoad(driver);
+
+        //find the element! - TODO: Add error catching and magic selector so can specify id, tag or css and it will find first instance? If more than one instance take photos of each!?
+        IWebElement element = driver.FindElement(By.CssSelector(elementSelector));
+
+        Byte[] byteArray = ((ITakesScreenshot)driver).GetScreenshot().AsByteArray;
+        Bitmap screenshot = new Bitmap(new MemoryStream(byteArray));
+        Rectangle croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width, element.Size.Height);
+        screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
 
 
+        byte[] bytes = ImageToByte(screenshot);
+        driver.Quit();
 
+        return bytes;
+    }
 
-
-
-
-
-
-
-
+    public static byte[] ImageToByte(Image img)
+    {
+        ImageConverter converter = new ImageConverter();
+        return (byte[])converter.ConvertTo(img, typeof(byte[]));
+    }
 
 
     /// <summary>
@@ -117,7 +150,7 @@ public static class SeleniumDriver
     /// </summary>
     /// <param name="url">Url to take an image of</param>
     /// <returns></returns>
-    public static byte[] GetScreenshotByUrl(Uri url, Browser browser = Browser.Chrome)
+    public static byte[] GetScreenshotByUrl(string url, Browser browser = Browser.Chrome)
     {
         IWebDriver driver = null;
         switch (browser)

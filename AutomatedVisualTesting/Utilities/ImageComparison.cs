@@ -213,6 +213,32 @@ public static class ImageComparison
         }
         else return -1;
     }
+    public static int GetDifference(string imageFileName, string url, string elementSelector, Browser browser = Browser.Chrome)
+    {
+        String fileDirectory = "../../TestData/";
+        MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url, elementSelector, browser));
+        Image imageFromUrl = Image.FromStream(currentScreenshot);
+
+        // first time we run a test we won't have a base image so create one and alert user in output window
+        if (!File.Exists(fileDirectory + imageFileName))
+        {
+            imageFromUrl.Save(fileDirectory + imageFileName);
+
+            Debug.WriteLine(@"-> No base image found for - " + imageFileName);
+            Debug.WriteLine(@"-> Base image created - " + imageFileName);
+
+        }
+
+        Image baseImage = Image.FromFile(fileDirectory + imageFileName);
+
+        float differencePercentage = baseImage.Differences(imageFromUrl, 0);
+        if (differencePercentage > 0)
+        {
+            // there was a difference, create a image of what differences there were
+            CreateDifferenceImage(baseImage, imageFromUrl, browser.ToString() + ".");
+        }
+        return (int)(differencePercentage * 100);
+    }
 
     /// <summary>
     /// Returns how much pixel difference between an image on disk and an image held in memory 
@@ -221,7 +247,7 @@ public static class ImageComparison
     /// <param name="url">The website to take a snapshot of</param>
     /// <param name="browser">The web browser to use to navigate to the url</param>
     /// <returns></returns>
-    public static int GetDifference(string imageFileName, Uri url, Browser browser = Browser.Chrome)
+    public static int GetDifference(string imageFileName, string url, Browser browser = Browser.Chrome)
     {
         String fileDirectory = "../../TestData/";
         MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url, browser));

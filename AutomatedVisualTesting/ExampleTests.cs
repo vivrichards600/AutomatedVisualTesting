@@ -20,7 +20,7 @@ public class ExampleTests
     public void NoDifferenceBetweenImageAndScreenshotByUrl()
     {
         String baseImage = "Chrome.png";
-        Uri imageByUrl = new Uri("http://www.google.co.uk");
+        string imageByUrl = "http://www.google.co.uk";
 
         int difference = GetDifference(baseImage, imageByUrl);
 
@@ -31,7 +31,7 @@ public class ExampleTests
     public void NoDifferenceBetweenImageAndScreenshotOfElementByUrl()
     {
         String baseImage = "Chrome.png";
-        Uri imageByUrl = new Uri("http://www.google.co.uk");
+        string imageByUrl = "http://www.google.co.uk";
 
 
         int difference = GetDifference(baseImage, imageByUrl);
@@ -42,7 +42,16 @@ public class ExampleTests
     [TestMethod]
     public void TakeScreenshotOfElementOnly()
     {
-        SeleniumDriver.SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", ".computers");
+      //  SeleniumDriver.SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", ".computers");
+
+
+        string baseImage = "Chrome.png";
+        string url = "http://computer-database.herokuapp.com/computers";
+        string elementSelector = ".computers";
+
+        int difference = GetDifference(baseImage, url, elementSelector);
+
+        Assert.IsTrue(difference == 0);
     }
 
 }
