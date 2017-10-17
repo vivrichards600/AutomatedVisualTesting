@@ -247,6 +247,10 @@ public static class ImageComparison
         }
         return (int)(differencePercentage * 100);
     }
+
+    
+
+
     
     /// <summary>
     /// Get difference between image and a page of a pdf which is converted into 

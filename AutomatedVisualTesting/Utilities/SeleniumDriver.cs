@@ -52,6 +52,65 @@ public static class SeleniumDriver
 
         driver.Quit();
     }
+    
+    //public static void SaveElementScreenShotByUrl(string url, IWebElement element, Browser browser = Browser.Chrome)
+   public static void SaveElementScreenShotByUrl(string url, string cssSelector, Browser browser = Browser.Chrome)
+    {
+        IWebDriver driver = null;
+        switch (browser)
+        {
+            case Browser.IE:
+                driver = new InternetExplorerDriver();
+                break;
+            case Browser.Firefox:
+                driver = new FirefoxDriver();
+                break;
+            default:
+                driver = new ChromeDriver();
+                break;
+        }
+
+        driver.Navigate().GoToUrl(url);
+        WaitForLoad(driver);
+
+        //find the element! - TODO: Add error catching and magic selector so can specify id, tag or css and it will find first instance? If more than one instance take photos of each!?
+        IWebElement element = driver.FindElement(By.CssSelector(cssSelector));
+
+        Byte[] byteArray = ((ITakesScreenshot)driver).GetScreenshot().AsByteArray;
+        System.Drawing.Bitmap screenshot = new System.Drawing.Bitmap(new System.IO.MemoryStream(byteArray));
+        System.Drawing.Rectangle croppedImage = new System.Drawing.Rectangle(element.Location.X, element.Location.Y, element.Size.Width, element.Size.Height);
+        screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
+
+        // TODO: Stick directory in a setting
+        String fileDirectory = "../../TestData/";
+        if (!Directory.Exists(fileDirectory))
+        {
+            // screenshot directory doesn't exist
+            driver.Quit();
+            throw new IOException("Please check screenshots folder exists within test solution to save screenshots");
+        }
+
+        String fileName = string.Format("{0}{1}.png", fileDirectory, browser.ToString());
+
+        screenshot.Save(fileName, System.Drawing.Imaging.ImageFormat.Png);
+
+        driver.Quit();
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     /// <summary>
     /// Create image of website for the given url

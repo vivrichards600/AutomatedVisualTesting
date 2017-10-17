@@ -26,4 +26,23 @@ public class ExampleTests
 
         Assert.IsTrue(difference == 0);
     }
+
+    [TestMethod]
+    public void NoDifferenceBetweenImageAndScreenshotOfElementByUrl()
+    {
+        String baseImage = "Chrome.png";
+        Uri imageByUrl = new Uri("http://www.google.co.uk");
+
+
+        int difference = GetDifference(baseImage, imageByUrl);
+
+        Assert.IsTrue(difference == 0);
+    }
+
+    [TestMethod]
+    public void TakeScreenshotOfElementOnly()
+    {
+        SeleniumDriver.SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", ".computers");
+    }
+
 }
