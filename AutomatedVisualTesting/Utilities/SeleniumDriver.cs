@@ -169,8 +169,11 @@ namespace AutomatedVisualTesting.Utilities
             SetDriver(browser);
             LoadUrl(url);
 
-            //find the element! - TODO: Add error catching and magic selector so can specify id, tag or css and it will find first instance? If more than one instance take photos of each!?
-            var element = _driver.FindElement(By.CssSelector(elementSelector));
+            // try to find element by ID
+            var element = _driver.FindElement(By.Id(elementSelector));
+            if (!element.Displayed)
+                element = _driver.FindElement(By.CssSelector(elementSelector));
+          
             var byteArray = ((ITakesScreenshot) _driver).GetScreenshot().AsByteArray;
             var screenshot = new Bitmap(new MemoryStream(byteArray));
             var croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width,
