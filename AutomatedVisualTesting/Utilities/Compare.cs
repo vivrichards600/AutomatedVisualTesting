@@ -58,9 +58,10 @@ namespace AutomatedVisualTesting.Utilities
         {
             //create a 16x16 tiles image with information about how much the two images differ
             var cellsize = 16; //each tile is 16 pixels wide and high
-            int width = img1.Width/DivFactor, height = img1.Height/DivFactor;
+            //int width = img1.Width / DivFactor, height = img1.Height / DivFactor;
+            int width = img1.Width, height = img1.Height ;
             var differences = img1.GetDifferences(img2);
-            var originalImage = new Bitmap(img1, width*cellsize + 1, height*cellsize + 1);
+            var originalImage = new Bitmap(img1, width, height);
             var g = Graphics.FromImage(originalImage);
 
             for (var y = 0; y < differences.GetLength(1); y++)
