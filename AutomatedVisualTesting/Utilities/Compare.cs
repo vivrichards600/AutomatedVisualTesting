@@ -42,7 +42,7 @@ namespace AutomatedVisualTesting.Utilities
             var differences = img1.GetDifferences(img2);
             var diffPixels = 0;
 
-            foreach (byte b in differences)
+            foreach (var b in differences)
                 if (b > threshold) diffPixels++;
             return diffPixels/256f;
         }
@@ -58,7 +58,7 @@ namespace AutomatedVisualTesting.Utilities
             //create a 16x16 tiles image with information about how much the two images differ
             var cellsize = 16; //each tile is 16 pixels wide and high
             int width = img1.Width/DivFactor, height = img1.Height/DivFactor;
-            byte[,] differences = img1.GetDifferences(img2);
+            var differences = img1.GetDifferences(img2);
             var originalImage = new Bitmap(img1, width*cellsize + 1, height*cellsize + 1);
             var g = Graphics.FromImage(originalImage);
 
@@ -79,18 +79,18 @@ namespace AutomatedVisualTesting.Utilities
         /// <param name="img2">The second image to compare</param>
         public static void CreateDifferenceImage(Image img1, Image img2)
         {
-            var OutputDirectory = AppSettings.Get("OutputDirectory");
+            var outputDirectory = AppSettings.Get("OutputDirectory");
             // Save difference image
             string differencesFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-Differences.png";
-            img2.GetDifferenceImage(img1).Save($"{OutputDirectory}{differencesFilename}");
+            img2.GetDifferenceImage(img1).Save($"{outputDirectory}{differencesFilename}");
 
             Debug.WriteLine("-> Unexpected difference(s) found");
-            Debug.WriteLine(@"-> Logging differences screenshot to: - file:///" + OutputDirectory + differencesFilename);
+            Debug.WriteLine(@"-> Logging differences screenshot to: - file:///" + outputDirectory + differencesFilename);
 
             // Save copy of actual image
             string actualImageFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-ActualImage.png";
-            img2.Save($"{OutputDirectory}{actualImageFilename}");
-            Debug.WriteLine(@"-> Logging actual screenshot to: - file:///" + OutputDirectory + actualImageFilename);
+            img2.Save($"{outputDirectory}{actualImageFilename}");
+            Debug.WriteLine(@"-> Logging actual screenshot to: - file:///" + outputDirectory + actualImageFilename);
         }
 
         /// <summary>
@@ -175,16 +175,16 @@ namespace AutomatedVisualTesting.Utilities
         {
             var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(url, elementSelector, browser));
             var imageFromUrl = Image.FromStream(currentScreenshot);
-            var TestDataDirectory = AppSettings.Get("TestDataDirectory");
+            var testDataDirectory = AppSettings.Get("TestDataDirectory");
             // first time we run a test we won't have a base image so create one and alert user in output window
-            if (!File.Exists(TestDataDirectory + imageFileName))
+            if (!File.Exists(testDataDirectory + imageFileName))
             {
-                imageFromUrl.Save(TestDataDirectory + imageFileName);
+                imageFromUrl.Save(testDataDirectory + imageFileName);
                 Debug.WriteLine(@"-> No base image found for - " + imageFileName);
                 Debug.WriteLine(@"-> Base image created - " + imageFileName);
             }
 
-            var baseImage = Image.FromFile(TestDataDirectory + imageFileName);
+            var baseImage = Image.FromFile(testDataDirectory + imageFileName);
             var differencePercentage = baseImage.Differences(imageFromUrl, 0);
             if (differencePercentage > 0)
                 CreateDifferenceImage(baseImage, imageFromUrl);
@@ -203,16 +203,16 @@ namespace AutomatedVisualTesting.Utilities
         {
             var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(url, browser));
             var imageFromUrl = Image.FromStream(currentScreenshot);
-            var TestDataDirectory = AppSettings.Get("TestDataDirectory");
+            var testDataDirectory = AppSettings.Get("TestDataDirectory");
 
             // first time we run a test we won't have a base image so create one and alert user in output window
-            if (!File.Exists(TestDataDirectory + imageFileName))
+            if (!File.Exists(testDataDirectory + imageFileName))
             {
-                imageFromUrl.Save(TestDataDirectory + imageFileName);
+                imageFromUrl.Save(testDataDirectory + imageFileName);
                 Debug.WriteLine(@"-> No base image found for - " + imageFileName);
                 Debug.WriteLine(@"-> Base image created - " + imageFileName);
             }
-            var baseImage = Image.FromFile(TestDataDirectory + imageFileName);
+            var baseImage = Image.FromFile(testDataDirectory + imageFileName);
             var differencePercentage = baseImage.Differences(imageFromUrl, 0);
             if (differencePercentage > 0)
                 CreateDifferenceImage(baseImage, imageFromUrl);
@@ -229,17 +229,17 @@ namespace AutomatedVisualTesting.Utilities
         /// <returns>Differences between an image and an image taken from a specified pdf page</returns>
         public static int GetDifference(string baseImage, string pdf, int page)
         {
-            var TestDataDirectory = AppSettings.Get("TestDataDirectory");
-            if (File.Exists(TestDataDirectory + baseImage))
+            var testDataDirectory = AppSettings.Get("TestDataDirectory");
+            if (File.Exists(testDataDirectory + baseImage))
             {
                 // MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url, browser));
-                var img1 = Image.FromFile(TestDataDirectory + baseImage);
+                var img1 = Image.FromFile(testDataDirectory + baseImage);
                 var img2 = ConvertPdf.GetPdfPageAsImage(pdf, page);
                 var differencePercentage = img1.Differences(img2, 0);
                 if (differencePercentage > 0)
                 {
                     CreateDifferenceImage(img1, img2);
-                    img2.Save($"{TestDataDirectory}{pdf}.ImageFromPdf.png");
+                    img2.Save($"{testDataDirectory}{pdf}.ImageFromPdf.png");
                 }
                 return (int) (differencePercentage*100);
             }
