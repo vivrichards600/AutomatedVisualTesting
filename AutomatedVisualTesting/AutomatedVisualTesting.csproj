@@ -69,7 +69,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Utilities\ConvertPdf.cs" />
-    <Compile Include="Utilities\ImageComparison.cs" />
+    <Compile Include="Utilities\Compare.cs" />
     <Compile Include="Utilities\SeleniumDriver.cs" />
     <Compile Include="ExampleTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,57 +1,39 @@
+using AutomatedVisualTesting.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using static ImageComparison;
 
-[TestClass]
-public class ExampleTests
+namespace AutomatedVisualTesting
 {
-    [TestMethod]
-    public void NoDifferenceBetweenImageTwoImages()
+    [TestClass]
+    public class ExampleTests
     {
-        String firstImage = "Cat.png";
-        String secondImage = "Cat.png";
+        [TestMethod]
+        public void NoDifferenceBetweenImageAndScreenshotFromUrl()
+        {
+            // Arrange
+            string baseImage = "ComputerDatabase.png";
+            string url = "http://computer-database.herokuapp.com/computers";
 
-        int difference = GetDifference(firstImage, secondImage);
+            // Act
+            int difference = Compare.GetDifference(baseImage, url);
 
-        Assert.IsTrue(difference == 0);
+            // Assert
+            Assert.IsTrue(difference == 0);
+        }
+
+        [TestMethod]
+        public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
+        {
+            // Arrange
+            string baseImage = "Table.png";
+            string url = "http://computer-database.herokuapp.com/computers";
+            string elementSelector = ".computers";
+
+            // Act
+            int difference = Compare.GetDifference(baseImage, url, elementSelector);
+
+            // Assert
+            Assert.IsTrue(difference == 0);
+        }
+
     }
-
-    [TestMethod]
-    public void NoDifferenceBetweenImageAndScreenshotByUrl()
-    {
-        String baseImage = "Chrome.png";
-        string imageByUrl = "http://www.google.co.uk";
-
-        int difference = GetDifference(baseImage, imageByUrl);
-
-        Assert.IsTrue(difference == 0);
-    }
-
-    [TestMethod]
-    public void NoDifferenceBetweenImageAndScreenshotOfElementByUrl()
-    {
-        String baseImage = "Chrome.png";
-        string imageByUrl = "http://www.google.co.uk";
-
-
-        int difference = GetDifference(baseImage, imageByUrl);
-
-        Assert.IsTrue(difference == 0);
-    }
-
-    [TestMethod]
-    public void TakeScreenshotOfElementOnly()
-    {
-      //  SeleniumDriver.SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", ".computers");
-
-
-        string baseImage = "Table.png";
-        string url = "http://computer-database.herokuapp.com/computers";
-        string elementSelector = ".computers";
-
-        int difference = GetDifference(baseImage, url, elementSelector);
-
-        Assert.IsTrue(difference == 0);
-    }
-
 }
