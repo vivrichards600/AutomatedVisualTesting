@@ -121,7 +121,7 @@ You can also specify which browser to use Chrome (used by default if no browser 
 When your tets fail because results were not as expected, the framework will take screenshots of the expected image (regardless where you check via url, pdf page etc), it will also produce an image displaying where the differences were found and place these images in the TestData folder.
 
 ## Settings
-The app.config contains two settings to enable you to specify:
+The app.config contains various settings to enable you to specify:
 
 
 The path to obtain base images from
@@ -129,10 +129,19 @@ The path to obtain base images from
     <add key="TestDataDirectory" value="../../TestData/" />
 ```
 
-
 The path to store difference and actual images to
 ``` xml
     <add key="OutputDirectory" value="C:\Temp\" /> 
+```
+
+The width to set the web driver window
+``` xml
+    <add key="DriverWidth" value="C:\Temp\" /> 
+```
+
+The height to set the web driver window
+``` xml
+    <add key="DriverWidth" value="C:\Temp\" /> 
 ```
 
 

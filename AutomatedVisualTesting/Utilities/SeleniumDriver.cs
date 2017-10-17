@@ -40,6 +40,12 @@ namespace AutomatedVisualTesting.Utilities
                     _driver = new ChromeDriver();
                     break;
             }
+
+            // Set driver height and width
+            var driverWidth = Int32.Parse(AppSettings.Get("DriverWidth"));
+            var driverHeight = Int32.Parse(AppSettings.Get("DriverHeight"));
+            _driver.Manage().Window.Size = new Size(driverWidth, driverHeight);
+
         }
 
         /// <summary>
@@ -134,6 +140,25 @@ namespace AutomatedVisualTesting.Utilities
                 throw new IOException("Could not find element to take a screenshot");
             }
         }
+        
+        /// <summary>
+        ///     Create image of website for the given url
+        /// </summary>
+        /// <param name="url">Url to take an image of</param>
+        /// <param name="browser">Web Browser</param>
+        /// <returns></returns>
+        public static byte[] GetScreenshotByUrl(string url, Browser browser = Browser.Chrome)
+        {
+            SetDriver(browser);
+            LoadUrl(url);
+
+            var ss = ((ITakesScreenshot)_driver).GetScreenshot();
+            var screenshot = ss.AsBase64EncodedString;
+            var bytes = Convert.FromBase64String(screenshot);
+            _driver.Quit();
+
+            return bytes;
+        }
 
         /// <summary>
         ///     Create image of website for the given url
@@ -169,25 +194,6 @@ namespace AutomatedVisualTesting.Utilities
         {
             var converter = new ImageConverter();
             return (byte[])converter.ConvertTo(img, typeof(byte[]));
-        }
-
-        /// <summary>
-        ///     Create image of website for the given url
-        /// </summary>
-        /// <param name="url">Url to take an image of</param>
-        /// <param name="browser">Web Browser</param>
-        /// <returns></returns>
-        public static byte[] GetScreenshotByUrl(string url, Browser browser = Browser.Chrome)
-        {
-            SetDriver(browser);
-            LoadUrl(url);
-
-            var ss = ((ITakesScreenshot)_driver).GetScreenshot();
-            var screenshot = ss.AsBase64EncodedString;
-            var bytes = Convert.FromBase64String(screenshot);
-            _driver.Quit();
-
-            return bytes;
         }
     }
 }
