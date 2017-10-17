@@ -64,7 +64,7 @@ namespace AutomatedVisualTesting.Utilities
         /// <param name="timeoutSec">Time to wait</param>
         public static void WaitForLoad(this IWebDriver driver, int timeoutSec = 60)
         {
-            var js = (IJavaScriptExecutor) driver;
+            var js = (IJavaScriptExecutor)driver;
             var wait = new WebDriverWait(driver, new TimeSpan(0, 0, timeoutSec));
             wait.Until(wd => js.ExecuteScript("return document.readyState").ToString() == "complete");
         }
@@ -81,7 +81,7 @@ namespace AutomatedVisualTesting.Utilities
             LoadUrl(url);
 
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
-            var ss = ((ITakesScreenshot) _driver).GetScreenshot();
+            var ss = ((ITakesScreenshot)_driver).GetScreenshot();
             if (!Directory.Exists(testDataDirectory))
             {
                 // screenshot directory doesn't exist
@@ -107,12 +107,21 @@ namespace AutomatedVisualTesting.Utilities
             LoadUrl(url);
 
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
-            // try to find element by ID
-            var element = _driver.FindElement(By.Id(elementSelector));
-            if (!element.Displayed)
-                element = _driver.FindElement(By.CssSelector(elementSelector));
 
-            var byteArray = ((ITakesScreenshot) _driver).GetScreenshot().AsByteArray;
+            IWebElement element = null;
+            try
+            {
+                // try to find element by ID
+                _driver.FindElement(By.Id(elementSelector));
+                element = _driver.FindElement(By.Id(elementSelector));
+            }
+            catch
+            {
+                // try to find element by CSS Selector
+                element = _driver.FindElement(By.CssSelector(elementSelector));
+            }
+
+            var byteArray = ((ITakesScreenshot)_driver).GetScreenshot().AsByteArray;
             var screenshot = new Bitmap(new MemoryStream(byteArray));
             try
             {
@@ -149,7 +158,7 @@ namespace AutomatedVisualTesting.Utilities
             SetDriver(browser);
             LoadUrl(url);
 
-            var ss = ((ITakesScreenshot) _driver).GetScreenshot();
+            var ss = ((ITakesScreenshot)_driver).GetScreenshot();
             var screenshot = ss.AsBase64EncodedString;
             var bytes = Convert.FromBase64String(screenshot);
             _driver.Quit();
@@ -169,12 +178,20 @@ namespace AutomatedVisualTesting.Utilities
             SetDriver(browser);
             LoadUrl(url);
 
-            // try to find element by ID
-            var element = _driver.FindElement(By.Id(elementSelector));
-            if (!element.Displayed)
+            IWebElement element = null;
+            try
+            {
+                // try to find element by ID
+                _driver.FindElement(By.Id(elementSelector));
+                element = _driver.FindElement(By.Id(elementSelector));
+            }
+            catch
+            {
+                // try to find element by CSS Selector
                 element = _driver.FindElement(By.CssSelector(elementSelector));
+            }
 
-            var byteArray = ((ITakesScreenshot) _driver).GetScreenshot().AsByteArray;
+            var byteArray = ((ITakesScreenshot)_driver).GetScreenshot().AsByteArray;
             var screenshot = new Bitmap(new MemoryStream(byteArray));
             var croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width,
                 element.Size.Height);
@@ -193,7 +210,7 @@ namespace AutomatedVisualTesting.Utilities
         public static byte[] ImageToByte(Image img)
         {
             var converter = new ImageConverter();
-            return (byte[]) converter.ConvertTo(img, typeof(byte[]));
+            return (byte[])converter.ConvertTo(img, typeof(byte[]));
         }
     }
 }
