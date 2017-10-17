@@ -45,7 +45,7 @@ public class ExampleTests
       //  SeleniumDriver.SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", ".computers");
 
 
-        string baseImage = "Chrome.png";
+        string baseImage = "Table.png";
         string url = "http://computer-database.herokuapp.com/computers";
         string elementSelector = ".computers";
 

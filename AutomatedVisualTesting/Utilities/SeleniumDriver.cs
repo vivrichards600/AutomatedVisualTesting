@@ -11,16 +11,14 @@ using System.IO;
 public static class SeleniumDriver
 {
     public enum Browser { Chrome, IE, Firefox };
+    private static IWebDriver driver = null;
 
     /// <summary>
-    /// Save screenshot of page loaded from url to Screenshots folder in
-    /// project using specified web driver and using page Title as filename
+    /// Set WebDriver browser
     /// </summary>
-    /// <param name="url">Webpage to navigate to</param>
-    /// <param name="browser">web browser to use</param>
-    public static void SaveScreenShotByUrl(string url, Browser browser = Browser.Chrome)
+    /// <param name="browser">Browser to use</param>
+    private static void SetDriver(Browser browser)
     {
-        IWebDriver driver = null;
         switch (browser)
         {
             case Browser.IE:
@@ -33,9 +31,40 @@ public static class SeleniumDriver
                 driver = new ChromeDriver();
                 break;
         }
+    }
 
+    /// <summary>
+    /// Load given url and wait for page to load
+    /// </summary>
+    /// <param name="url">Url to navigate to</param>
+    private static void LoadUrl(string url)
+    {
         driver.Navigate().GoToUrl(url);
         WaitForLoad(driver);
+    }
+    
+    /// <summary>
+    /// Wait for page to load
+    /// </summary>
+    /// <param name="driver">web driver</param>
+    public static void WaitForLoad(this IWebDriver driver, int timeoutSec = 60)
+    {
+        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+        WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, timeoutSec));
+        wait.Until(wd => js.ExecuteScript("return document.readyState").ToString() == "complete");
+    }
+
+    /// <summary>
+    /// Save screenshot of page loaded from url to Screenshots folder in
+    /// project using specified web driver and using page Title as filename
+    /// </summary>
+    /// <param name="url">Webpage to navigate to</param>
+    /// <param name="browser">web browser to use</param>
+    public static void SaveScreenShotByUrl(string url, Browser browser = Browser.Chrome)
+    {
+        SetDriver(browser);
+        LoadUrl(url);
+
         Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
 
         String pageTitle = driver.Title.ToString();
@@ -54,25 +83,17 @@ public static class SeleniumDriver
         driver.Quit();
     }
 
-    //public static void SaveElementScreenShotByUrl(string url, IWebElement element, Browser browser = Browser.Chrome)
+    /// <summary>
+    /// Save screenshot of element on page loaded from url to Screenshots folder in
+    /// project using specified web driver and using page Title as filename
+    /// </summary>
+    /// <param name="url">Webpage to navigate to</param>
+    /// <param name="elementSelector">Element to take snapshot of</param>
+    /// <param name="browser">Web Browser to use</param>
     public static void SaveElementScreenShotByUrl(string url, string elementSelector, Browser browser = Browser.Chrome)
     {
-        IWebDriver driver = null;
-        switch (browser)
-        {
-            case Browser.IE:
-                driver = new InternetExplorerDriver();
-                break;
-            case Browser.Firefox:
-                driver = new FirefoxDriver();
-                break;
-            default:
-                driver = new ChromeDriver();
-                break;
-        }
-
-        driver.Navigate().GoToUrl(url);
-        WaitForLoad(driver);
+        SetDriver(browser);
+        LoadUrl(url);
 
         //find the element! - TODO: Add error catching and magic selector so can specify id, tag or css and it will find first instance? If more than one instance take photos of each!?
         IWebElement element = driver.FindElement(By.CssSelector(elementSelector));
@@ -98,8 +119,6 @@ public static class SeleniumDriver
         driver.Quit();
     }
 
-
-
     /// <summary>
     /// Create image of website for the given url
     /// </summary>
@@ -107,21 +126,8 @@ public static class SeleniumDriver
     /// <returns></returns>
     public static byte[] GetScreenshotByUrl(string url, string elementSelector, Browser browser = Browser.Chrome)
     {
-        IWebDriver driver = null;
-        switch (browser)
-        {
-            case Browser.IE:
-                driver = new InternetExplorerDriver();
-                break;
-            case Browser.Firefox:
-                driver = new FirefoxDriver();
-                break;
-            default:
-                driver = new ChromeDriver();
-                break;
-        }
-        driver.Navigate().GoToUrl(url.ToString());
-        WaitForLoad(driver);
+        SetDriver(browser);
+        LoadUrl(url);
 
         //find the element! - TODO: Add error catching and magic selector so can specify id, tag or css and it will find first instance? If more than one instance take photos of each!?
         IWebElement element = driver.FindElement(By.CssSelector(elementSelector));
@@ -138,12 +144,16 @@ public static class SeleniumDriver
         return bytes;
     }
 
+    /// <summary>
+    /// Convert image to byte array
+    /// </summary>
+    /// <param name="img"></param>
+    /// <returns></returns>
     public static byte[] ImageToByte(Image img)
     {
         ImageConverter converter = new ImageConverter();
         return (byte[])converter.ConvertTo(img, typeof(byte[]));
     }
-
 
     /// <summary>
     /// Create image of website for the given url
@@ -152,21 +162,8 @@ public static class SeleniumDriver
     /// <returns></returns>
     public static byte[] GetScreenshotByUrl(string url, Browser browser = Browser.Chrome)
     {
-        IWebDriver driver = null;
-        switch (browser)
-        {
-            case Browser.IE:
-                driver = new InternetExplorerDriver();
-                break;
-            case Browser.Firefox:
-                driver = new FirefoxDriver();
-                break;
-            default:
-                driver = new ChromeDriver();
-                break;
-        }
-        driver.Navigate().GoToUrl(url.ToString());
-        WaitForLoad(driver);
+        SetDriver(browser);
+        LoadUrl(url);
 
         Screenshot ss = ((ITakesScreenshot)driver).GetScreenshot();
         string screenshot = ss.AsBase64EncodedString;
@@ -175,16 +172,5 @@ public static class SeleniumDriver
         driver.Quit();
 
         return bytes;
-    }
-
-    /// <summary>
-    /// Wait for page to load
-    /// </summary>
-    /// <param name="driver">web driver</param>
-    public static void WaitForLoad(this IWebDriver driver, int timeoutSec = 60)
-    {
-        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-        WebDriverWait wait = new WebDriverWait(driver, new TimeSpan(0, 0, timeoutSec));
-        wait.Until(wd => js.ExecuteScript("return document.readyState").ToString() == "complete");
     }
 }
