@@ -13,47 +13,74 @@ It is also necessary sometimes to check contents of files, which can be quite ti
 ## How it works 
 
 ### Base images for websites
-Once you are happy with the way each of your web pages look you simply use this framework whilst writing your tests. The firt time you run the tests the base images do not exist, this framework will alert you to tell you this and then continue to take the base images for you automatically - there is a helper if you would like to manually take base images but it isn't required. 
+Once you are happy with how a particular area or how the whole of your web pages look you write tests using this framework. The firt time you run your tests the base images will not exist, you can manually take the base images or this framework will automatically take the base images for you and alert you to tell you that it has done this.
 
-To manually take base image if you want to overwrite base images:
+To manually take a base image of a web page:
 
 ``` c#
  // Create initial screenshot of website used within regression tests later on
         SaveScreenShotByUrl("http://www.google.com/");
 ```
 
-You can also specify which browser to use Chrome (used by default if no browser specified), IE or Firefox. 
+To manually take a base image of a particular element or area or a web page:
+``` c#
+ // Create initial screenshot of website used within regression tests later on
+        SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", ".table"); // take base image by using css selector
+        SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", "table"); // take base image by using ID selector
+```
+
+You can also specify which browser to use: Chrome (used by default if no browser specified), IE or Firefox. 
 
 ``` c#
-        SaveScreenShotByUrl("http://www.vivrichards.co.uk"); // same as specifying Browser.Chrome
-        SaveScreenShotByUrl("http://www.vivrichards.co.uk", Browser.Chrome);
-        SaveScreenShotByUrl("http://www.vivrichards.co.uk", Browser.IE);
-        SaveScreenShotByUrl("http://www.vivrichards.co.uk", Browser.Firefox);
+        SaveScreenShotByUrl("http://computer-database.herokuapp.com/computers"); // same as specifying Browser.Chrome
+        SaveScreenShotByUrl("http://computer-database.herokuapp.com/computers", Browser.Chrome);
+        SaveScreenShotByUrl("http://computer-database.herokuapp.com/computers", Browser.IE);
+        SaveScreenShotByUrl("http://computer-database.herokuapp.com/computers", Browser.Firefox);
 ```
 
 ### Base images for files
-nce you are happy with the way your pdf pages look you convert each page in to images using just one line of code using the built in helper. 
+Once you are happy with the way your pdf pages look you convert each page in to images using just one line of code using the built in helper. 
 
 ``` c#
       SavePdfToImage("1.pdf");
 ```
 
-### Compare Image to an Image taken by visiting a url which is held in memory:
+### Compare a base image of a web page to an image of a web page taken by visiting a url:
 
 ``` c#
-    [TestMethod]
-    public void DetectDifferenceBetweenImageAndUrlChrome()
-    {
-        //Arrange
-        String image = "Chrome.png";
-        Uri url = new Uri("http://www.vivrichards.co.uk");
+     [TestMethod]
+        public void NoDifferenceBetweenImageAndScreenshotFromUrl()
+        {
+            // Arrange
+            string baseImage = "ComputerDatabase.png";
+            string url = "http://computer-database.herokuapp.com/computers";
 
-        //Act
-        int difference = GetDifference(image, url);
+            // Act
+            int difference = Compare.GetDifference(baseImage, url);
 
-        //Assert
-        Assert.IsTrue(difference == 0); // do not allow any difference
-    }
+            // Assert
+            Assert.IsTrue(difference == 0);
+        }
+```
+
+### Compare a base image of an element on a web page to an image of an element taken by visiting a url:
+
+``` c#
+
+        [TestMethod]
+        public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
+        {
+            // Arrange
+            string baseImage = "Table.png";
+            string url = "http://computer-database.herokuapp.com/computers";
+            string elementSelector = ".computers";
+
+            // Act
+            int difference = Compare.GetDifference(baseImage, url, elementSelector);
+
+            // Assert
+            Assert.IsTrue(difference == 0);
+        }
 ```
 
 You can also specify which browser to use Chrome (used by default if no browser specified), IE or Firefox. 
@@ -63,24 +90,6 @@ You can also specify which browser to use Chrome (used by default if no browser 
         int difference = GetDifference(image, url, Browser.Chrome);
         int difference = GetDifference(image, url, Browser.IE);
         int difference = GetDifference(image, url, Browser.Firefox);    
-```
-
-### Compare Image with another Image:
-
-``` c#
-    [TestMethod]
-    public void DetectDifferenceBetweenImages()
-    {
-        //Arrange
-        String image1 = "Chrome1.png";
-        String image2 = "Chrome2.png";
-        
-        //Act
-        int difference = GetDifference(image1, image2);
-
-        //Assert
-        Assert.IsTrue(difference == 0); // do not allow any difference
-    }
 ```
 
 ### Compare pdf page to an Image taken previously from a pdf:
@@ -105,3 +114,21 @@ You can also specify which browser to use Chrome (used by default if no browser 
 ## Debugging when tests fail
 
 When your tets fail because results were not as expected, the framework will take screenshots of the expected image (regardless where you check via url, pdf page etc), it will also produce an image displaying where the differences were found and place these images in the TestData folder.
+
+## Settings
+The app.config contains two settings to enable you to specify:
+
+
+The path to obtain base images from
+``` xml
+    <add key="TestDataDirectory" value="../../TestData/" />
+```
+
+
+The path to store difference and actual images to
+``` xml
+    <add key="OutputDirectory" value="C:\Temp\" /> 
+```
+
+
+   
