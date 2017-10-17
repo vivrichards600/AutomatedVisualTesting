@@ -150,6 +150,6 @@ There are a number of things I want to add over the next few months - please fee
 * The ability to blanket over dynamic elements
 * Providing a dashboard for diff images and various test info
 * Storage options - AWS/ Google / Local - set in config?
-* Tolerance - ability to adjust to account for hardward colour differences
+* Tolerance - ability to adjust to account for hardware colour differences
 
    

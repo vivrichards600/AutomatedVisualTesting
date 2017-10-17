@@ -6,6 +6,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.IE;
+using OpenQA.Selenium.Support.Extensions;
 using OpenQA.Selenium.Support.UI;
 using static System.Configuration.ConfigurationSettings;
 
@@ -42,8 +43,8 @@ namespace AutomatedVisualTesting.Utilities
             }
 
             // Set driver height and width
-            var driverWidth = int.Parse(AppSettings.Get("DriverWidth"));
-            var driverHeight = int.Parse(AppSettings.Get("DriverHeight"));
+            var driverWidth = Int32.Parse(AppSettings.Get("DriverWidth"));
+            var driverHeight = Int32.Parse(AppSettings.Get("DriverHeight"));
             _driver.Manage().Window.Size = new Size(driverWidth, driverHeight);
         }
 
@@ -212,5 +213,41 @@ namespace AutomatedVisualTesting.Utilities
             var converter = new ImageConverter();
             return (byte[])converter.ConvertTo(img, typeof(byte[]));
         }
+
+        ///// <summary>
+        ///// Cover the specified dynamic element on the renedered page 
+        ///// </summary>
+        ///// <param name="elementSelector">Element Selector</param>
+        //public static void CoverDynamicElementBySelector(string elementSelector)
+        //{
+        //    SetDriver(Browser.Chrome);
+        //    LoadUrl("http://computer-database.herokuapp.com/computers");
+
+        //    IWebElement element = null;
+        //    try
+        //    {
+        //        // try to find element by ID
+        //        _driver.FindElement(By.Id(elementSelector));
+        //        element = _driver.FindElement(By.Id(elementSelector));
+        //    }
+        //    catch
+        //    {
+        //        // try to find element by CSS Selector
+        //        element = _driver.FindElement(By.CssSelector(elementSelector));
+        //    }
+
+        //    // Get position of element which we will overlay with a coloured box
+        //    var elementX = element.Location.X; //element from top
+        //    var elementY = element.Location.Y;  // element from left
+        //    var elementWidth = element.Size.Width;
+        //    var elementHeight = element.Size.Height;
+
+        //    // Set styling to place over the top of the dynamic content
+        //    var style = String.Format("'position:absolute;top:{1}px;left:{0}px;width:{2}px;height:{3}px;color:white;background-color:#8b008b;text-align: center;'", elementX, elementY, elementWidth, elementHeight);
+
+        //    // Set javascript to execute on browser which will cover the dynamic content
+        //    string replaceDynamicContentScript = "var div = document.createElement('div');div.setAttribute('style'," + style + ");document.body.appendChild(div); ";
+        //    _driver.ExecuteJavaScript(replaceDynamicContentScript);
+        //}
     }
 }

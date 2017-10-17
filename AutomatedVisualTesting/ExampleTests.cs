@@ -27,10 +27,11 @@ namespace AutomatedVisualTesting
             string baseImage = "Table.png";
             string url = "http://computer-database.herokuapp.com/computers";
             string elementSelector = ".computers";
+           // SeleniumDriver.CoverDynamicElementBySelector(".computers");
 
             // Act
             int difference = Compare.GetDifference(baseImage, url, elementSelector);
-
+            
             // Assert
             Assert.IsTrue(difference == 0);
         }

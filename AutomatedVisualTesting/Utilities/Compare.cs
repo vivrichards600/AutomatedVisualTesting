@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using OpenQA.Selenium;
 using static System.Configuration.ConfigurationSettings;
 
 namespace AutomatedVisualTesting.Utilities
