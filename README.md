@@ -1,6 +1,6 @@
 # Automated Visual Testing
 
-![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/diff.png "Chrome Differences Screenshot")
+![Differences screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/diff.png "Chrome Differences Screenshot")
 
 ## About this framework
 
@@ -23,7 +23,7 @@ To manually take a base image of a web page create an instance of the WebDriver,
 ```
 
 
-![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabase.png "Web Page Screenshot")
+![WebPage screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/HomePage.png "Web Page Screenshot")
 
 To manually take a base image of a particular element or area of a web page, create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper and specify the selector (specify Id or CssSelector):
 ``` c#
@@ -32,7 +32,7 @@ To manually take a base image of a particular element or area of a web page, cre
         SaveElementScreenShotByUrl(driver, "table"); // take base image by using ID selector
 ```
 
-![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/Table.png "Element Screenshot")
+![WebElement table screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/TableElement.png "Element Screenshot")
 
 ### Base images for pdf files
 Once you are happy with the way your pdf pages look you convert each page in to images using just one line of code using the built in helper. 
@@ -98,6 +98,8 @@ Once you are happy with the way your pdf pages look you convert each page in to 
         }
 ```
 
+![Web page with dynamic WebElement table covered screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/HomePageCoveringDynamicElement.png "Element Screenshot")
+
 ### Compare pdf page to an Image taken previously from a pdf:
 
 ``` c#
@@ -119,7 +121,7 @@ Once you are happy with the way your pdf pages look you convert each page in to 
 ```
 ## Debugging when tests fail
 
-When your tets fail because results were not as expected, the framework will take screenshots of what it actually compared as well as an image displaying where the differences were found. The directory where these images are stored are configurable on the app.config.
+When your tets fail because results were not as expected, the framework will take screenshots of what it actually compared as well as an image displaying where the differences were found. The directory where these images are stored are configurable in the app.config.
 
 ## Settings
 The app.config contains various settings to enable you to specify:
