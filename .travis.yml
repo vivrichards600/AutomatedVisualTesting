@@ -1,2 +1,2 @@
 ﻿language: csharp
-solution: AutomatedVisualTesting.sln
+solution: AutomatedVisualTesting/AutomatedVisualTesting.sln
