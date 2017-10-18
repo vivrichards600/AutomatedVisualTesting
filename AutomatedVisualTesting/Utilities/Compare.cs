@@ -59,7 +59,7 @@ namespace AutomatedVisualTesting.Utilities
             //create a 16x16 tiles image with information about how much the two images differ
             var cellsize = 16; //each tile is 16 pixels wide and high
             //int width = img1.Width / DivFactor, height = img1.Height / DivFactor;
-            int width = img1.Width, height = img1.Height ;
+            int width = img1.Width, height = img1.Height;
             var differences = img1.GetDifferences(img2);
             var originalImage = new Bitmap(img1, width, height);
             var g = Graphics.FromImage(originalImage);
@@ -167,15 +167,13 @@ namespace AutomatedVisualTesting.Utilities
         ///     Get difference between base image of selected element and screenshot of specified element using the browser
         ///     specified
         /// </summary>
+        /// <param name="driver">WebDriver</param>
         /// <param name="imageFileName">Base image file name</param>
-        /// <param name="url">url to navigate to</param>
         /// <param name="elementSelector">element to compare</param>
-        /// <param name="browser">Browser to use</param>
         /// <returns></returns>
-        public static int GetDifference(string imageFileName, string url, string elementSelector,
-            SeleniumDriver.Browser browser = SeleniumDriver.Browser.Chrome)
+        public static int GetDifference(IWebDriver driver, string imageFileName, string elementSelector)
         {
-            var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(url, elementSelector, browser));
+            var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(driver, elementSelector));
             var imageFromUrl = Image.FromStream(currentScreenshot);
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             // first time we run a test we won't have a base image so create one and alert user in output window
@@ -196,14 +194,12 @@ namespace AutomatedVisualTesting.Utilities
         /// <summary>
         ///     Returns how much pixel difference between an image on disk and an image held in memory
         /// </summary>
+        /// <param name="driver">WebDriver</param>
         /// <param name="imageFileName">base image filename.png</param>
-        /// <param name="url">The website to take a snapshot of</param>
-        /// <param name="browser">The web browser to use to navigate to the url</param>
         /// <returns></returns>
-        public static int GetDifference(string imageFileName, string url,
-            SeleniumDriver.Browser browser = SeleniumDriver.Browser.Chrome)
+        public static int GetDifference(IWebDriver driver, string imageFileName)
         {
-            var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(url, browser));
+            var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(driver));
             var imageFromUrl = Image.FromStream(currentScreenshot);
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
 
