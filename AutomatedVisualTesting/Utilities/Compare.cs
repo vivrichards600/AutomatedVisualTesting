@@ -114,7 +114,7 @@ namespace AutomatedVisualTesting.Utilities
         }
 
         /// <summary>
-        ///     Converts an image to grayscale
+        ///     Returns an image which has been grayscaled
         /// </summary>
         /// <param name="original">The image to grayscale</param>
         /// <returns>A grayscale version of the image</returns>
@@ -144,7 +144,7 @@ namespace AutomatedVisualTesting.Utilities
         }
 
         /// <summary>
-        ///     Resizes an image
+        ///     Returns a resized image
         /// </summary>
         /// <param name="originalImage">The image to resize</param>
         /// <param name="newWidth">The new width in pixels</param>
@@ -164,8 +164,7 @@ namespace AutomatedVisualTesting.Utilities
         }
 
         /// <summary>
-        ///     Get difference between base image of selected element and screenshot of specified element using the browser
-        ///     specified
+        ///     Get difference between base image of selected element and screenshot of specified element using the WebDriver specified
         /// </summary>
         /// <param name="driver">WebDriver</param>
         /// <param name="imageFileName">Base image file name</param>
@@ -173,7 +172,7 @@ namespace AutomatedVisualTesting.Utilities
         /// <returns></returns>
         public static int GetDifference(IWebDriver driver, string imageFileName, string elementSelector)
         {
-            var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(driver, elementSelector));
+            var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotOfCurrentPage(driver, elementSelector));
             var imageFromUrl = Image.FromStream(currentScreenshot);
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             // first time we run a test we won't have a base image so create one and alert user in output window
@@ -192,14 +191,15 @@ namespace AutomatedVisualTesting.Utilities
         }
 
         /// <summary>
-        ///     Returns how much pixel difference between an image on disk and an image held in memory
+        ///     Returns how much pixel difference between the specified image and a screenshot 
+        ///     of the currently rendered web page which is held in memory
         /// </summary>
         /// <param name="driver">WebDriver</param>
         /// <param name="imageFileName">base image filename.png</param>
         /// <returns></returns>
         public static int GetDifference(IWebDriver driver, string imageFileName)
         {
-            var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotByUrl(driver));
+            var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotOfCurrentPage(driver));
             var imageFromUrl = Image.FromStream(currentScreenshot);
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
 
@@ -230,7 +230,7 @@ namespace AutomatedVisualTesting.Utilities
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             if (File.Exists(testDataDirectory + baseImage))
             {
-                // MemoryStream currentScreenshot = new MemoryStream(GetScreenshotByUrl(url, browser));
+                // MemoryStream currentScreenshot = new MemoryStream(GetScreenshotOfCurrentPage(url, browser));
                 var img1 = Image.FromFile(testDataDirectory + baseImage);
                 var img2 = ConvertPdf.GetPdfPageAsImage(pdf, page);
                 var differencePercentage = img1.Differences(img2, 0);

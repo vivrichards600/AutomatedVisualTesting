@@ -11,11 +11,10 @@ namespace AutomatedVisualTesting.Utilities
     public static class SeleniumDriver
     {
         /// <summary>
-        ///     Save screenshot of page loaded from url to Screenshots folder in
-        ///     project using specified web driver and using page Title as filename
+        ///     Save screenshot of currently loaded page
         /// </summary>
         /// <param name="driver">WebDriver</param>
-        public static void SaveScreenShotByUrl(IWebDriver driver)
+        public static void SaveScreenShotOfCurrentPage(IWebDriver driver)
         {
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             var ss = ((ITakesScreenshot) driver).GetScreenshot();
@@ -31,12 +30,11 @@ namespace AutomatedVisualTesting.Utilities
         }
 
         /// <summary>
-        ///     Save screenshot of element on page loaded from url to Screenshots folder in
-        ///     project using specified web driver and using page Title as filename
+        ///     Save screenshot of element on currently loaded page
         /// </summary>
         /// <param name="driver">ẀebDriver</param>
         /// <param name="elementSelector">Element to take snapshot of</param>
-        public static void SaveElementScreenShotByUrl(IWebDriver driver, string elementSelector)
+        public static void SaveElementScreenShotOfCurrentPage(IWebDriver driver, string elementSelector)
         {
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             IWebElement element = null;
@@ -79,11 +77,11 @@ namespace AutomatedVisualTesting.Utilities
         }
 
         /// <summary>
-        ///     Create image of website for the given url
+        ///     Get screenshot of currently loaded page
         /// </summary>
         /// <param name="driver">WebDriver</param>
         /// <returns></returns>
-        public static byte[] GetScreenshotByUrl(IWebDriver driver)
+        public static byte[] GetScreenshotOfCurrentPage(IWebDriver driver)
         {
             var ss = ((ITakesScreenshot) driver).GetScreenshot();
             var screenshot = ss.AsBase64EncodedString;
@@ -94,12 +92,12 @@ namespace AutomatedVisualTesting.Utilities
         }
 
         /// <summary>
-        ///     Create image of website for the given url
+        ///     Get screenshot of element for currently loaded page
         /// </summary>
         /// <param name="driver">WebDriver</param>
         /// <param name="elementSelector">Selector to find element</param>
         /// <returns></returns>
-        public static byte[] GetScreenshotByUrl(IWebDriver driver, string elementSelector)
+        public static byte[] GetScreenshotOfCurrentPage(IWebDriver driver, string elementSelector)
         {
             IWebElement element = null;
             try
