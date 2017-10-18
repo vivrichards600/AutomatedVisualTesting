@@ -15,35 +15,26 @@ It is also necessary sometimes to check contents of files, which can be quite ti
 ### Base images for websites
 Once you are happy with how a particular area or how the whole of your web page looks you write tests using this framework. The first time you run your tests the base images will not exist, you can manually take the base images or this framework will automatically take the base images for you and alert you to tell you that this has been done.
 
-To manually take a base image of a web page:
+To manually take a base image of a web page create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper:
 
 ``` c#
- // Create base image of web page
-        SaveScreenShotByUrl("http://www.google.com/");
+ // Create base image of web page by providing the WebDriver
+        SaveScreenShotByUrl(driver);
 ```
 
 
 ![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabase.png "Web Page Screenshot")
 
-To manually take a base image of a particular element or area or a web page (specify Id or CssSelector):
+To manually take a base image of a particular element or area of a web page, create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper and specify the selector (specify Id or CssSelector):
 ``` c#
  // Create initial screenshot of website used within regression tests later on
-        SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", ".table"); // take base image by using css selector
-        SaveElementScreenShotByUrl("http://computer-database.herokuapp.com/computers", "table"); // take base image by using ID selector
+        SaveElementScreenShotByUrl(driver, ".table"); // take base image by using css selector
+        SaveElementScreenShotByUrl(driver, "table"); // take base image by using ID selector
 ```
 
 ![alt text](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/Table.png "Element Screenshot")
 
-You can also specify which browser to use: Chrome (used by default if no browser specified), IE or Firefox. 
-
-``` c#
-        SaveScreenShotByUrl("http://computer-database.herokuapp.com/computers"); // same as specifying Browser.Chrome
-        SaveScreenShotByUrl("http://computer-database.herokuapp.com/computers", Browser.Chrome);
-        SaveScreenShotByUrl("http://computer-database.herokuapp.com/computers", Browser.IE);
-        SaveScreenShotByUrl("http://computer-database.herokuapp.com/computers", Browser.Firefox);
-```
-
-### Base images for files
+### Base images for pdf files
 Once you are happy with the way your pdf pages look you convert each page in to images using just one line of code using the built in helper. 
 
 ``` c#
@@ -56,12 +47,11 @@ Once you are happy with the way your pdf pages look you convert each page in to 
      [TestMethod]
         public void NoDifferenceBetweenImageAndScreenshotFromUrl()
         {
-            // Arrange
-            string baseImage = "ComputerDatabase.png";
-            string url = "http://computer-database.herokuapp.com/computers";
+             // Arrange
+            var baseImage = "HomePage.png";
 
             // Act
-            int difference = Compare.GetDifference(baseImage, url);
+            var difference = Compare.GetDifference(_driver, baseImage);
 
             // Assert
             Assert.IsTrue(difference == 0);
@@ -75,26 +65,37 @@ Once you are happy with the way your pdf pages look you convert each page in to 
         [TestMethod]
         public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
         {
-            // Arrange
-            string baseImage = "Table.png";
-            string url = "http://computer-database.herokuapp.com/computers";
-            string elementSelector = ".computers";
+           // Arrange
+            var baseImage = "TableElement.png";
+            var elementByCssSelector = ".computers";
 
             // Act
-            int difference = Compare.GetDifference(baseImage, url, elementSelector);
+            var difference = Compare.GetDifference(_driver, baseImage, elementByCssSelector);
 
             // Assert
             Assert.IsTrue(difference == 0);
         }
 ```
 
-You can also specify which browser to use Chrome (used by default if no browser specified), IE or Firefox. 
+### Compare a base image of a web page, whilst covering a dynamic element to an image of a web page taken by visiting a url:
 
 ``` c#
-        int difference = GetDifference(image, url); // same as specifying Browser.Chrome
-        int difference = GetDifference(image, url, Browser.Chrome);
-        int difference = GetDifference(image, url, Browser.IE);
-        int difference = GetDifference(image, url, Browser.Firefox);    
+     [TestMethod]
+        public void NoDifferenceBetweenImageAndScreenshotFromUrl()
+        {
+            // Arrange
+            var baseImage = "HomePageCoveringDynamicElement.png";
+            var elementByCssSelector = ".computers";
+
+            // Cover specified dynamic element on page with blanket
+            SeleniumDriver.CoverDynamicElementBySelector(_driver, elementByCssSelector);
+
+            // Act
+            var difference = Compare.GetDifference(_driver, baseImage);
+
+            // Assert
+            Assert.IsTrue(difference == 0);
+        }
 ```
 
 ### Compare pdf page to an Image taken previously from a pdf:
@@ -118,7 +119,7 @@ You can also specify which browser to use Chrome (used by default if no browser 
 ```
 ## Debugging when tests fail
 
-When your tets fail because results were not as expected, the framework will take screenshots of the expected image (regardless where you check via url, pdf page etc), it will also produce an image displaying where the differences were found and place these images in the TestData folder.
+When your tets fail because results were not as expected, the framework will take screenshots of what it actually compared as well as an image displaying where the differences were found. The directory where these images are stored are configurable on the app.config.
 
 ## Settings
 The app.config contains various settings to enable you to specify:
@@ -147,7 +148,6 @@ The height to set the web driver window
 ## TODOs
 There are a number of things I want to add over the next few months - please feel free to get involved in the project!
 
-* The ability to blanket over dynamic elements
 * Providing a dashboard for diff images and various test info
 * Storage options - AWS/ Google / Local - set in config?
 * Tolerance - ability to adjust to account for hardware colour differences

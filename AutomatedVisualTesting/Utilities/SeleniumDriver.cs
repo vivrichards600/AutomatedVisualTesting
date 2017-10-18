@@ -15,8 +15,7 @@ namespace AutomatedVisualTesting.Utilities
         ///     project using specified web driver and using page Title as filename
         /// </summary>
         /// <param name="driver">WebDriver</param>
-        /// <param name="url">Webpage to navigate to</param>
-        public static void SaveScreenShotByUrl(IWebDriver driver, string url)
+        public static void SaveScreenShotByUrl(IWebDriver driver)
         {
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             var ss = ((ITakesScreenshot) driver).GetScreenshot();
@@ -36,9 +35,8 @@ namespace AutomatedVisualTesting.Utilities
         ///     project using specified web driver and using page Title as filename
         /// </summary>
         /// <param name="driver">ẀebDriver</param>
-        /// <param name="url">Webpage to navigate to</param>
         /// <param name="elementSelector">Element to take snapshot of</param>
-        public static void SaveElementScreenShotByUrl(IWebDriver driver, string url, string elementSelector)
+        public static void SaveElementScreenShotByUrl(IWebDriver driver, string elementSelector)
         {
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             IWebElement element = null;
