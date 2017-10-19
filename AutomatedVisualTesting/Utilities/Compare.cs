@@ -58,7 +58,6 @@ namespace AutomatedVisualTesting.Utilities
         {
             //create a 16x16 tiles image with information about how much the two images differ
             var cellsize = 16; //each tile is 16 pixels wide and high
-            //int width = img1.Width / DivFactor, height = img1.Height / DivFactor;
             int width = img1.Width, height = img1.Height;
             var differences = img1.GetDifferences(img2);
             var originalImage = new Bitmap(img1, width, height);
@@ -84,7 +83,7 @@ namespace AutomatedVisualTesting.Utilities
             var outputDirectory = AppSettings.Get("OutputDirectory");
             // Save difference image
             string differencesFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-Differences.png";
-            img2.GetDifferenceImage(img1).Save($"{outputDirectory}{differencesFilename}");
+            img1.GetDifferenceImage(img2).Save($"{outputDirectory}{differencesFilename}");
 
             Debug.WriteLine("-> Unexpected difference(s) found");
             Debug.WriteLine(@"-> Logging differences screenshot to: - file:///" + outputDirectory + differencesFilename);

@@ -1,3 +1,4 @@
+using System;
 using System.Drawing;
 using AutomatedVisualTesting.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,11 +12,20 @@ namespace AutomatedVisualTesting
     [TestClass]
     public class ExampleTests
     {
-        private static IWebDriver _driver;
+        private TestContext _mTestContext;
+
+        public TestContext TestContext
+        {
+            get { return _mTestContext; }
+            set { _mTestContext = value; }
+        }
 
         [TestInitialize]
         public void Startup()
         {
+            // add start time for test
+            TestContext.Properties.Add("Start", DateTime.Now.ToLongTimeString());
+
             // Create new Chrome WebDriver
             _driver = new ChromeDriver();
 
@@ -26,16 +36,23 @@ namespace AutomatedVisualTesting
             // Set driver height/width of window
             _driver.Manage().Window.Size = new Size(driverWidth, driverHeight);
 
-            // Navigate to url for testing
+            // Navigate to base url for testing
             _driver.Navigate().GoToUrl("http://computer-database.herokuapp.com/computers");
         }
 
         [TestCleanup]
         public void Cleanup()
         {
-            // ensure we close down the Chrome WebDriver
+
+            //log test result
+            Reporting.AddTestResult(_mTestContext, _driver);
+
+            // ensure we close down the Chrome WebDrivers
             _driver.Quit();
+
         }
+
+        private static IWebDriver _driver;
 
         [TestMethod]
         public void NoDifferenceBetweenImageAndScreenshotFromUrl()
