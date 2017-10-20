@@ -11,7 +11,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using OpenQA.Selenium;
-using static System.Configuration.ConfigurationSettings;
+using static System.Configuration.ConfigurationManager;
 
 namespace AutomatedVisualTesting.Utilities
 {
@@ -45,7 +45,7 @@ namespace AutomatedVisualTesting.Utilities
 
             foreach (var b in differences)
                 if (b > threshold) diffPixels++;
-            return diffPixels/256f;
+            return diffPixels / 256f;
         }
 
         /// <summary>
@@ -53,23 +53,29 @@ namespace AutomatedVisualTesting.Utilities
         /// </summary>
         /// <param name="img1">The first image</param>
         /// <param name="img2">The image to compare with</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
         /// <returns>an image which displays the differences between two images</returns>
-        public static Bitmap GetDifferenceImage(this Image img1, Image img2)
+        public static Bitmap GetDifferenceImage(this Image img1, Image img2, byte threshold = 0)
         {
             //create a 16x16 tiles image with information about how much the two images differ
-            var cellsize = 16; //each tile is 16 pixels wide and high
-            int width = img1.Width, height = img1.Height;
-            var differences = img1.GetDifferences(img2);
-            var originalImage = new Bitmap(img1, width, height);
-            var g = Graphics.FromImage(originalImage);
+            int cellsize = 16;  //each tile is 16 pixels wide and high
+            int width = img1.Width / DivFactor, height = img1.Height / DivFactor;
+            byte[,] differences = img1.GetDifferences(img2);
+            byte maxDifference = 255;
+            Bitmap originalImage = new Bitmap(img1, width * cellsize + 1, height * cellsize + 1);
+            Graphics g = Graphics.FromImage(originalImage);
 
-            for (var y = 0; y < differences.GetLength(1); y++)
-                for (var x = 0; x < differences.GetLength(0); x++)
+            for (int y = 0; y < differences.GetLength(1); y++)
+            {
+                for (int x = 0; x < differences.GetLength(0); x++)
                 {
-                    var cellValue = differences[x, y];
-                    if (cellValue > 0)
-                        g.DrawRectangle(Pens.DarkMagenta, x*cellsize, y*cellsize, cellsize, cellsize);
+                    byte cellValue = differences[x, y];
+                    if (cellValue > threshold)
+                    {
+                        g.DrawRectangle(Pens.DarkMagenta, x * cellsize, y * cellsize, cellsize, cellsize);
+                    }
                 }
+            }
             return originalImage;
         }
 
@@ -83,7 +89,7 @@ namespace AutomatedVisualTesting.Utilities
             var outputDirectory = AppSettings.Get("OutputDirectory");
             // Save difference image
             string differencesFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-Differences.png";
-            img1.GetDifferenceImage(img2).Save($"{outputDirectory}{differencesFilename}");
+            img2.GetDifferenceImage(img1).Save($"{outputDirectory}{differencesFilename}");
 
             Debug.WriteLine("-> Unexpected difference(s) found");
             Debug.WriteLine(@"-> Logging differences screenshot to: - file:///" + outputDirectory + differencesFilename);
@@ -102,13 +108,13 @@ namespace AutomatedVisualTesting.Utilities
         /// <returns>the differences between the two images as a doublearray</returns>
         public static byte[,] GetDifferences(this Image img1, Image img2)
         {
-            int width = img1.Width/DivFactor, height = img1.Height/DivFactor;
-            var thisOne = (Bitmap) img1.Resize(width, height).GetGrayScaleVersion();
-            var theOtherOne = (Bitmap) img2.Resize(width, height).GetGrayScaleVersion();
+            int width = img1.Width / DivFactor, height = img1.Height / DivFactor;
+            var thisOne = (Bitmap)img1.Resize(width, height).GetGrayScaleVersion();
+            var theOtherOne = (Bitmap)img2.Resize(width, height).GetGrayScaleVersion();
             var differences = new byte[width, height];
             for (var y = 0; y < height; y++)
                 for (var x = 0; x < width; x++)
-                    differences[x, y] = (byte) Math.Abs(thisOne.GetPixel(x, y).R - theOtherOne.GetPixel(x, y).R);
+                    differences[x, y] = (byte)Math.Abs(thisOne.GetPixel(x, y).R - theOtherOne.GetPixel(x, y).R);
             return differences;
         }
 
@@ -168,12 +174,14 @@ namespace AutomatedVisualTesting.Utilities
         /// <param name="driver">WebDriver</param>
         /// <param name="imageFileName">Base image file name</param>
         /// <param name="elementSelector">element to compare</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
         /// <returns></returns>
-        public static int GetDifference(IWebDriver driver, string imageFileName, string elementSelector)
+        public static int GetDifference(IWebDriver driver, string imageFileName, string elementSelector, byte threshold = 0)
         {
             var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotOfCurrentPage(driver, elementSelector));
             var imageFromUrl = Image.FromStream(currentScreenshot);
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
+
             // first time we run a test we won't have a base image so create one and alert user in output window
             if (!File.Exists(testDataDirectory + imageFileName))
             {
@@ -183,10 +191,11 @@ namespace AutomatedVisualTesting.Utilities
             }
 
             var baseImage = Image.FromFile(testDataDirectory + imageFileName);
-            var differencePercentage = baseImage.Differences(imageFromUrl, 0);
-            if (differencePercentage > 0)
+            var differencePercentage = baseImage.Differences(imageFromUrl, threshold);
+            if ((int)(differencePercentage * 100) > 0)
                 CreateDifferenceImage(baseImage, imageFromUrl);
-            return (int) (differencePercentage*100);
+
+            return (int)(differencePercentage * 100);
         }
 
         /// <summary>
@@ -195,8 +204,9 @@ namespace AutomatedVisualTesting.Utilities
         /// </summary>
         /// <param name="driver">WebDriver</param>
         /// <param name="imageFileName">base image filename.png</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
         /// <returns></returns>
-        public static int GetDifference(IWebDriver driver, string imageFileName)
+        public static int GetDifference(IWebDriver driver, string imageFileName, byte threshold = 0)
         {
             var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotOfCurrentPage(driver));
             var imageFromUrl = Image.FromStream(currentScreenshot);
@@ -210,10 +220,11 @@ namespace AutomatedVisualTesting.Utilities
                 Debug.WriteLine(@"-> Base image created - " + imageFileName);
             }
             var baseImage = Image.FromFile(testDataDirectory + imageFileName);
-            var differencePercentage = baseImage.Differences(imageFromUrl, 0);
-            if (differencePercentage > 0)
+            var differencePercentage = baseImage.Differences(imageFromUrl, threshold);
+            if ((int)(differencePercentage * 100) > 0)
                 CreateDifferenceImage(baseImage, imageFromUrl);
-            return (int) (differencePercentage*100);
+
+            return (int)(differencePercentage * 100);
         }
 
         /// <summary>
@@ -223,8 +234,9 @@ namespace AutomatedVisualTesting.Utilities
         /// <param name="baseImage">Base image to compare</param>
         /// <param name="pdf">pdf file to use</param>
         /// <param name="page">page of pdf to convert</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
         /// <returns>Differences between an image and an image taken from a specified pdf page</returns>
-        public static int GetDifference(string baseImage, string pdf, int page)
+        public static int GetDifference(string baseImage, string pdf, int page, byte threshold = 0)
         {
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             if (File.Exists(testDataDirectory + baseImage))
@@ -232,13 +244,13 @@ namespace AutomatedVisualTesting.Utilities
                 // MemoryStream currentScreenshot = new MemoryStream(GetScreenshotOfCurrentPage(url, browser));
                 var img1 = Image.FromFile(testDataDirectory + baseImage);
                 var img2 = ConvertPdf.GetPdfPageAsImage(pdf, page);
-                var differencePercentage = img1.Differences(img2, 0);
-                if (differencePercentage > 0)
+                var differencePercentage = img1.Differences(img2, threshold);
+                if ((int)(differencePercentage * 100) > 0)
                 {
                     CreateDifferenceImage(img1, img2);
                     img2.Save($"{testDataDirectory}{pdf}.ImageFromPdf.png");
                 }
-                return (int) (differencePercentage*100);
+                return (int)(differencePercentage * 100);
             }
             return -1;
         }

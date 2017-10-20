@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using static System.Int32;
-using static System.Configuration.ConfigurationSettings;
+using static System.Configuration.ConfigurationManager;
 
 namespace AutomatedVisualTesting.Utilities
 {

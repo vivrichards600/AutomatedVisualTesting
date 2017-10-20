@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
-using static System.Configuration.ConfigurationSettings;
+using static System.Configuration.ConfigurationManager;
 
 namespace AutomatedVisualTesting.Utilities
 {
