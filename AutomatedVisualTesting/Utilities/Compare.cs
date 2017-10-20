@@ -36,9 +36,9 @@ namespace AutomatedVisualTesting.Utilities
         /// </summary>
         /// <param name="img1">The first image</param>
         /// <param name="img2">The image to compare to</param>
-        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 3.</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 1.</param>
         /// <returns>The difference between the two images as a percentage</returns>
-        public static float Differences(this Image img1, Image img2, byte threshold = 0)
+        public static float Differences(this Image img1, Image img2, byte threshold = 1)
         {
             var differences = img1.GetDifferences(img2);
             var diffPixels = 0;
@@ -53,9 +53,9 @@ namespace AutomatedVisualTesting.Utilities
         /// </summary>
         /// <param name="img1">The first image</param>
         /// <param name="img2">The image to compare with</param>
-        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 1.</param>
         /// <returns>an image which displays the differences between two images</returns>
-        public static Bitmap GetDifferenceImage(this Image img1, Image img2, byte threshold = 0)
+        public static Bitmap GetDifferenceImage(this Image img1, Image img2, byte threshold = 1)
         {
             //create a 16x16 tiles image with information about how much the two images differ
             int cellsize = 16;  //each tile is 16 pixels wide and high
@@ -63,6 +63,7 @@ namespace AutomatedVisualTesting.Utilities
             byte[,] differences = img1.GetDifferences(img2);
             byte maxDifference = 255;
             Bitmap originalImage = new Bitmap(img1, width * cellsize + 1, height * cellsize + 1);
+
             Graphics g = Graphics.FromImage(originalImage);
 
             for (int y = 0; y < differences.GetLength(1); y++)
@@ -89,7 +90,7 @@ namespace AutomatedVisualTesting.Utilities
             var outputDirectory = AppSettings.Get("OutputDirectory");
             // Save difference image
             string differencesFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-Differences.png";
-            img2.GetDifferenceImage(img1).Save($"{outputDirectory}{differencesFilename}");
+            img2.GetDifferenceImage(img1).Resize(img1.Width,img1.Height).Save($"{outputDirectory}{differencesFilename}");
 
             Debug.WriteLine("-> Unexpected difference(s) found");
             Debug.WriteLine(@"-> Logging differences screenshot to: - file:///" + outputDirectory + differencesFilename);
@@ -174,9 +175,9 @@ namespace AutomatedVisualTesting.Utilities
         /// <param name="driver">WebDriver</param>
         /// <param name="imageFileName">Base image file name</param>
         /// <param name="elementSelector">element to compare</param>
-        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 1.</param>
         /// <returns></returns>
-        public static int GetDifference(IWebDriver driver, string imageFileName, string elementSelector, byte threshold = 0)
+        public static int GetDifference(IWebDriver driver, string imageFileName, string elementSelector, byte threshold = 1)
         {
             var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotOfCurrentPage(driver, elementSelector));
             var imageFromUrl = Image.FromStream(currentScreenshot);
@@ -204,9 +205,9 @@ namespace AutomatedVisualTesting.Utilities
         /// </summary>
         /// <param name="driver">WebDriver</param>
         /// <param name="imageFileName">base image filename.png</param>
-        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 1.</param>
         /// <returns></returns>
-        public static int GetDifference(IWebDriver driver, string imageFileName, byte threshold = 0)
+        public static int GetDifference(IWebDriver driver, string imageFileName, byte threshold = 1)
         {
             var currentScreenshot = new MemoryStream(SeleniumDriver.GetScreenshotOfCurrentPage(driver));
             var imageFromUrl = Image.FromStream(currentScreenshot);
@@ -234,9 +235,9 @@ namespace AutomatedVisualTesting.Utilities
         /// <param name="baseImage">Base image to compare</param>
         /// <param name="pdf">pdf file to use</param>
         /// <param name="page">page of pdf to convert</param>
-        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 0.</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 1.</param>
         /// <returns>Differences between an image and an image taken from a specified pdf page</returns>
-        public static int GetDifference(string baseImage, string pdf, int page, byte threshold = 0)
+        public static int GetDifference(string baseImage, string pdf, int page, byte threshold = 1)
         {
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             if (File.Exists(testDataDirectory + baseImage))
