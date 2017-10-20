@@ -21,7 +21,7 @@ namespace AutomatedVisualTesting.Utilities
             var reportFilename = AppSettings.Get("ReportFilename");
 
             // load html report template
-            var reportTemplate = File.ReadAllText($@"{testDataDirectory}\ReportTemplate.html").Replace("<h1>{TodaysDate}</h1>", $"<h1>{DateTime.Now.ToShortDateString()}</h1>");
+            var reportTemplate = File.ReadAllText($@"{testDataDirectory}\ReportTemplate.html").Replace("<h2>{TodaysDate}</h2>", $"<h2>{DateTime.Now.ToShortDateString()}</h2>");
             // check if we have a report file already created
             if (!File.Exists($@"{outputDirectory}\{reportFilename}"))
                 using (var sw = File.CreateText($@"{outputDirectory}\{reportFilename}"))
@@ -79,24 +79,17 @@ namespace AutomatedVisualTesting.Utilities
             if (text.Contains(todaysDate))
             {
                 //already logged results todays so log results under todays date
-                text = text.Replace($"<h1>{todaysDate}</h1><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody>",
-         $"<h1>{todaysDate}</h1><table class='table'><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr>");
+                text = text.Replace($"<h2>{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody>",
+         $"<h2>{todaysDate}</h2><table class='table'><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr>");
                 File.WriteAllText($@"{outputDirectory}\{reportFilename}", text);
             }
             else
             {
                 // haven't logged results todays, create new heading for todays date and log results
-                text = text.Replace("<div class=\"col-md-12\">",
-                $"<div class=\"col-md-12\"><h1>{todaysDate}</h1><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr></tbody></table>");
+                text = text.Replace("<h1>Automated Visual Test Results</h1>",
+                $"<h1>Automated Visual Test Results</h1><h2>{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr></tbody></table>");
                 File.WriteAllText($@"{outputDirectory}\{reportFilename}", text);
             }
-
-            // check if we already have logged results for todays date, if so log results under date heading, if not create new heading for todays results and log results
-            //DateTime.Now.ToShortDateString() 
-
-            //text = text.Replace("<tbody>",
-            //    $"<tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr>");
-            //File.WriteAllText($@"{outputDirectory}\{reportFilename}", text);
         }
     }
 }
