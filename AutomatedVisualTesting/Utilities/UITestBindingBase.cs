@@ -10,7 +10,6 @@ namespace AutomatedVisualTesting.Utilities
 {
     public class UITestBindingBase
     {
-
         public static IWebDriver Driver;
 
         public TestContext TestContext { get; set; }
@@ -27,19 +26,17 @@ namespace AutomatedVisualTesting.Utilities
             // Get driver height/width from app.config
             var driverWidth = Parse(AppSettings.Get("DriverWidth"));
             var driverHeight = Parse(AppSettings.Get("DriverHeight"));
-
             // Set driver height/width of window
             Driver.Manage().Window.Size = new Size(driverWidth, driverHeight);
 
-            // Set page load timeout
             // Get driver height/width from app.config
             var pageLoadTimeout = Parse(AppSettings.Get("PageLoadTimeout"));
-            Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(pageLoadTimeout);//.Add(new TimeSpan(5));
+            // Set page load timeout
+            Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(pageLoadTimeout); //.Add(new TimeSpan(5));
 
             // Get Base URL from app.config
             var baseUrl = AppSettings.Get("BaseUrl");
-
-            // Navigate to base url for testing
+            // Navigate to base url
             Driver.Navigate().GoToUrl(baseUrl);
         }
 

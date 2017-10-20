@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using static System.Configuration.ConfigurationManager;
 
@@ -88,12 +89,13 @@ namespace AutomatedVisualTesting.Utilities
         public static void CreateDifferenceImage(Image img1, Image img2)
         {
             var outputDirectory = AppSettings.Get("OutputDirectory");
+            var reportFilename = AppSettings.Get("ReportFilename");
             // Save difference image
             string differencesFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-Differences.png";
             img2.GetDifferenceImage(img1).Resize(img1.Width,img1.Height).Save($"{outputDirectory}{differencesFilename}");
 
             Debug.WriteLine("-> Unexpected difference(s) found");
-            Debug.WriteLine(@"-> Logging differences screenshot to: - file:///" + outputDirectory + differencesFilename);
+            Debug.WriteLine($@"-> Logging differences screenshot to: - file:///{outputDirectory}\{reportFilename}");
 
             // Save copy of actual image
             string actualImageFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-ActualImage.png";
