@@ -15,6 +15,15 @@ It is also necessary sometimes to check contents of files, which can be quite ti
 ### Base images for websites
 Once you are happy with how a particular area or how the whole of your web page looks you write tests using this framework. The first time you run your tests the base images will not exist, you can manually take the base images or this framework will automatically take the base images for you and alert you to tell you that this has been done.
 
+At the top of your test class you need to inherit the UITestBindingBase base class. This will take care of the web driver, and various options which you can configure in the app.config.
+ 
+``` c#
+	public class YourTestClass : UITestBindingBase
+	{
+	// Your tests...
+	}
+```
+
 To manually take a base image of a web page create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper:
 
 ``` c#
