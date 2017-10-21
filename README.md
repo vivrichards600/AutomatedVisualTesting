@@ -121,7 +121,9 @@ Once you are happy with the way your pdf pages look you convert each page in to 
 ```
 ## Debugging when tests fail
 
-When your tets fail because results were not as expected, the framework will take screenshots of what it actually compared as well as an image displaying where the differences were found. The directory where these images are stored are configurable in the app.config.
+When your tets fail because results were not as expected, the framework will take screenshots of what it actually compared as well as an image displaying where the differences were found. The directory where these images are stored are configurable in the app.config. You can also switch on or off in app.config whether or not to generate a report for your visual test results.
+
+![Visual test report](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ReportScreenshot.png "Report Screenshot")
 
 ## Settings
 The app.config contains various settings to enable you to specify:
@@ -137,6 +139,21 @@ The path to store difference and actual images to
     <add key="OutputDirectory" value="C:\Temp\" /> 
 ```
 
+Whether or not to create a report for visual test results
+``` xml
+    <add key="ReportResults" value="True"/> 
+```
+
+Filename for test results report
+``` xml
+    <add key="ReportFilename" value="Report.html" />
+```
+
+Base url to start testing
+``` xml
+    <add key="BaseUrl" value="http://computer-database.herokuapp.com/computers" />
+```
+	
 The width to set the web driver window
 ``` xml
     <add key="DriverWidth" value="1024" /> 
@@ -147,10 +164,16 @@ The height to set the web driver window
     <add key="DriverWidth" value="768" /> 
 ```
 
-## TODOs
-There are a number of things I want to add over the next few months - please feel free to get involved in the project!
+The amount of seconds the driver should wait for the page to load
+``` xml
+    <add key="PageLoadTimeout" value="5" />
+```
 
-* Storage options - AWS/ Google / Local - set in config?
+## TODOs
+There are a number of things I want to add/change over the next few months - please feel free to get involved in the project!
+
 * Unit tests!!
+* Tidy up reporting
+* Storage options - AWS/ Google / Local - set in config?
 
    
