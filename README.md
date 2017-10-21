@@ -53,58 +53,57 @@ Once you are happy with the way your pdf pages look you convert each page in to 
 ### Compare a base image of a web page to an image of a web page taken by visiting a url:
 
 ``` c#
-     [TestMethod]
-        public void NoDifferenceBetweenImageAndScreenshotFromUrl()
-        {
-             // Arrange
-            var baseImage = "HomePage.png";
+	[TestMethod]
+	public void NoDifferenceBetweenImageAndScreenshotFromUrl()
+	{
+		 // Arrange
+		var baseImage = "HomePage.png";
 
-            // Act
-            var difference = Compare.GetDifference(_driver, baseImage);
+		// Act
+		var difference = Compare.GetDifference(_driver, baseImage);
 
-            // Assert
-            Assert.IsTrue(difference == 0);
-        }
+		// Assert
+		Assert.IsTrue(difference == 0);
+	}
 ```
 
 ### Compare a base image of an element on a web page to an image of an element taken by visiting a url:
 
 ``` c#
+	[TestMethod]
+	public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
+	{
+	   // Arrange
+		var baseImage = "TableElement.png";
+		var elementByCssSelector = ".computers";
 
-        [TestMethod]
-        public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
-        {
-           // Arrange
-            var baseImage = "TableElement.png";
-            var elementByCssSelector = ".computers";
+		// Act
+		var difference = Compare.GetDifference(_driver, baseImage, elementByCssSelector);
 
-            // Act
-            var difference = Compare.GetDifference(_driver, baseImage, elementByCssSelector);
-
-            // Assert
-            Assert.IsTrue(difference == 0);
-        }
+		// Assert
+		Assert.IsTrue(difference == 0);
+	}
 ```
 
 ### Compare a base image of a web page, whilst covering a dynamic element to an image of a web page taken by visiting a url:
 
 ``` c#
-     [TestMethod]
-        public void NoDifferenceBetweenImageAndScreenshotFromUrl()
-        {
-            // Arrange
-            var baseImage = "HomePageCoveringDynamicElement.png";
-            var elementByCssSelector = ".computers";
+	[TestMethod]
+	public void NoDifferenceBetweenImageAndScreenshotFromUrl()
+	{
+		// Arrange
+		var baseImage = "HomePageCoveringDynamicElement.png";
+		var elementByCssSelector = ".computers";
 
-            // Cover specified dynamic element on page with blanket
-            SeleniumDriver.CoverDynamicElementBySelector(_driver, elementByCssSelector);
+		// Cover specified dynamic element on page with blanket
+		SeleniumDriver.CoverDynamicElementBySelector(_driver, elementByCssSelector);
 
-            // Act
-            var difference = Compare.GetDifference(_driver, baseImage);
+		// Act
+		var difference = Compare.GetDifference(_driver, baseImage);
 
-            // Assert
-            Assert.IsTrue(difference == 0);
-        }
+		// Assert
+		Assert.IsTrue(difference == 0);
+	}
 ```
 
 ![Web page with dynamic WebElement table covered screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/HomePageCoveringDynamicElement.png "Element Screenshot")
@@ -112,21 +111,20 @@ Once you are happy with the way your pdf pages look you convert each page in to 
 ### Compare pdf page to an Image taken previously from a pdf:
 
 ``` c#
- [TestMethod]
-    public void DifferenceBetweenPdfPageAndImage()
-    {
-        //Arrange
-        String pdf = "1.pdf";
-        int page = 1;
-        String image = "1.png";
+	[TestMethod]
+	public void DifferenceBetweenPdfPageAndImage()
+	{
+		//Arrange
+		String pdf = "1.pdf";
+		int page = 1;
+		String image = "1.png";
 
-        //Act
-       int difference = GetDifference(image, pdf, page);
+		//Act
+		int difference = GetDifference(image, pdf, page);
 
-        //Assert
-        Assert.IsFalse(difference == 0); // do not allow any difference
-    }
-}
+		//Assert
+		Assert.IsFalse(difference == 0); // do not allow any difference
+	}
 ```
 ## Debugging when tests fail
 
