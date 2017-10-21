@@ -12,11 +12,16 @@ namespace AutomatedVisualTesting.Utilities
     {
         public static IWebDriver Driver;
 
+        /// <summary>
+        ///Gets or sets the test context which provides
+        ///information about and functionality for the current test run.
+        ///</summary>
         public TestContext TestContext { get; set; }
 
         [TestInitialize]
         public void Startup()
         {
+
             // Load settings from app.config
             var driverWidth = Parse(AppSettings.Get("DriverWidth"));
             var driverHeight = Parse(AppSettings.Get("DriverHeight"));
@@ -38,8 +43,10 @@ namespace AutomatedVisualTesting.Utilities
         [TestCleanup]
         public void Cleanup()
         {
-            //log test result
-            Reporting.AddTestResult(TestContext, Driver);
+            //log test result if reporting is switched on
+            var reportResults = Convert.ToBoolean(AppSettings.Get("ReportResults"));
+            if (reportResults)
+                Reporting.AddTestResult(TestContext, Driver);
 
             // ensure we close down the Chrome WebDrivers
             Driver.Quit();
