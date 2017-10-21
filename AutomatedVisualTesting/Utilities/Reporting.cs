@@ -27,7 +27,7 @@ namespace AutomatedVisualTesting.Utilities
             // load html report template
             var reportTemplate =
                 File.ReadAllText($@"{testDataDirectory}\ReportTemplate.html")
-                    .Replace("<h2>{TodaysDate}</h2>", $"<h2>{todaysDate}</h2>")
+                    .Replace("<h2>{TodaysDate}</h2>", $"<h2 id=\"{dateAnchor}\">{todaysDate}</h2>")
                     .Replace("<div class=\"col-2\"><h2>Test Runs</h2><ul>",
                         $"<div class=\"col-2\"><h2>Test Runs</h2><ul><li><a href=\"#{dateAnchor}\">{todaysDate}</a></li>");
 
@@ -98,7 +98,7 @@ namespace AutomatedVisualTesting.Utilities
                     $"<div class=\"col-2\"><h2>Test Runs</h2><ul><li><a href=\"#{dateAnchor}\">{todaysDate}</a></li>");
 
                 reportContents = reportContents.Replace("<div class=\"col-10\">",
-                    $"<div class=\"col-8\"><h2 id=\"{dateAnchor}\">{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr></tbody></table>");
+                    $"<div class=\"col-10\"><h2 id=\"{dateAnchor}\">{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr></tbody></table>");
                 File.WriteAllText($@"{outputDirectory}\{reportFilename}", reportContents);
             }
         }
