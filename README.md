@@ -27,8 +27,8 @@ At the top of your test class you need to inherit the UITestBindingBase base cla
 To manually take a base image of a web page create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper:
 
 ``` c#
- // Create base image of web page by providing the WebDriver
-        SaveScreenShotByUrl(driver);
+	// Create base image of web page by providing the WebDriver
+	SaveScreenShotByUrl(driver);
 ```
 
 
@@ -36,9 +36,9 @@ To manually take a base image of a web page create an instance of the WebDriver,
 
 To manually take a base image of a particular element or area of a web page, create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper and specify the selector (specify Id or CssSelector):
 ``` c#
- // Create initial screenshot of website used within regression tests later on
-        SaveElementScreenShotByUrl(driver, ".table"); // take base image by using css selector
-        SaveElementScreenShotByUrl(driver, "table"); // take base image by using ID selector
+	// Create initial screenshot of website used within regression tests later on
+	SaveElementScreenShotByUrl(driver, ".table"); // take base image by using css selector
+	SaveElementScreenShotByUrl(driver, "table"); // take base image by using ID selector
 ```
 
 ![WebElement table screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/TableElement.png "Element Screenshot")
