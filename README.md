@@ -18,17 +18,17 @@ Once you are happy with how a particular area or how the whole of your web page 
 At the top of your test class you need to inherit the UITestBindingBase base class. This will take care of the web driver, and various options which you can configure in the app.config.
  
 ``` c#
-	public class YourTestClass : UITestBindingBase
-	{
+public class YourTestClass : UITestBindingBase
+{
 	// Your tests...
-	}
+}
 ```
 
 To manually take a base image of a web page create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper:
 
 ``` c#
-	// Create base image of web page by providing the WebDriver
-	SaveScreenShotByUrl(driver);
+// Create base image of web page by providing the WebDriver
+SaveScreenShotByUrl(driver);
 ```
 
 
@@ -36,9 +36,9 @@ To manually take a base image of a web page create an instance of the WebDriver,
 
 To manually take a base image of a particular element or area of a web page, create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper and specify the selector (specify Id or CssSelector):
 ``` c#
-	// Create initial screenshot of website used within regression tests later on
-	SaveElementScreenShotByUrl(driver, ".table"); // take base image by using css selector
-	SaveElementScreenShotByUrl(driver, "table"); // take base image by using ID selector
+// Create initial screenshot of website used within regression tests later on
+SaveElementScreenShotByUrl(driver, ".table"); // take base image by using css selector
+SaveElementScreenShotByUrl(driver, "table"); // take base image by using ID selector
 ```
 
 ![WebElement table screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/TableElement.png "Element Screenshot")
@@ -47,63 +47,63 @@ To manually take a base image of a particular element or area of a web page, cre
 Once you are happy with the way your pdf pages look you convert each page in to images using just one line of code using the built in helper. 
 
 ``` c#
-      SavePdfToImage("1.pdf");
+SavePdfToImage("1.pdf");
 ```
 
 ### Compare a base image of a web page to an image of a web page taken by visiting a url:
 
 ``` c#
-	[TestMethod]
-	public void NoDifferenceBetweenImageAndScreenshotFromUrl()
-	{
-		 // Arrange
-		var baseImage = "HomePage.png";
+[TestMethod]
+public void NoDifferenceBetweenImageAndScreenshotFromUrl()
+{
+	// Arrange
+	var baseImage = "HomePage.png";
 
-		// Act
-		var difference = Compare.GetDifference(_driver, baseImage);
+	// Act
+	var difference = Compare.GetDifference(_driver, baseImage);
 
-		// Assert
-		Assert.IsTrue(difference == 0);
-	}
+	// Assert
+	Assert.IsTrue(difference == 0);
+}
 ```
 
 ### Compare a base image of an element on a web page to an image of an element taken by visiting a url:
 
 ``` c#
-	[TestMethod]
-	public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
-	{
-	   // Arrange
-		var baseImage = "TableElement.png";
-		var elementByCssSelector = ".computers";
+[TestMethod]
+public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
+{
+	// Arrange
+	var baseImage = "TableElement.png";
+	var elementByCssSelector = ".computers";
 
-		// Act
-		var difference = Compare.GetDifference(_driver, baseImage, elementByCssSelector);
+	// Act
+	var difference = Compare.GetDifference(_driver, baseImage, elementByCssSelector);
 
-		// Assert
-		Assert.IsTrue(difference == 0);
-	}
+	// Assert
+	Assert.IsTrue(difference == 0);
+}
 ```
 
 ### Compare a base image of a web page, whilst covering a dynamic element to an image of a web page taken by visiting a url:
 
 ``` c#
-	[TestMethod]
-	public void NoDifferenceBetweenImageAndScreenshotFromUrl()
-	{
-		// Arrange
-		var baseImage = "HomePageCoveringDynamicElement.png";
-		var elementByCssSelector = ".computers";
+[TestMethod]
+public void NoDifferenceBetweenImageAndScreenshotFromUrl()
+{
+	// Arrange
+	var baseImage = "HomePageCoveringDynamicElement.png";
+	var elementByCssSelector = ".computers";
 
-		// Cover specified dynamic element on page with blanket
-		SeleniumDriver.CoverDynamicElementBySelector(_driver, elementByCssSelector);
+	// Cover specified dynamic element on page with blanket
+	SeleniumDriver.CoverDynamicElementBySelector(_driver, elementByCssSelector);
 
-		// Act
-		var difference = Compare.GetDifference(_driver, baseImage);
+	// Act
+	var difference = Compare.GetDifference(_driver, baseImage);
 
-		// Assert
-		Assert.IsTrue(difference == 0);
-	}
+	// Assert
+	Assert.IsTrue(difference == 0);
+}
 ```
 
 ![Web page with dynamic WebElement table covered screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/HomePageCoveringDynamicElement.png "Element Screenshot")
@@ -114,16 +114,16 @@ Once you are happy with the way your pdf pages look you convert each page in to 
 	[TestMethod]
 	public void DifferenceBetweenPdfPageAndImage()
 	{
-		//Arrange
-		String pdf = "1.pdf";
-		int page = 1;
-		String image = "1.png";
+	//Arrange
+	String pdf = "1.pdf";
+	int page = 1;
+	String image = "1.png";
 
-		//Act
-		int difference = GetDifference(image, pdf, page);
+	//Act
+	int difference = GetDifference(image, pdf, page);
 
-		//Assert
-		Assert.IsFalse(difference == 0); // do not allow any difference
+	//Assert
+	Assert.IsFalse(difference == 0); // do not allow any difference
 	}
 ```
 ## Debugging when tests fail
@@ -138,42 +138,42 @@ The app.config contains various settings to enable you to specify:
 
 The path to obtain base images from
 ``` xml
-    <add key="TestDataDirectory" value="../../TestData/" />
+<add key="TestDataDirectory" value="../../TestData/" />
 ```
 
 The path to store difference and actual images to
 ``` xml
-    <add key="OutputDirectory" value="C:\Temp\" /> 
+<add key="OutputDirectory" value="C:\Temp\" /> 
 ```
 
 Whether or not to create a report for visual test results
 ``` xml
-    <add key="ReportResults" value="True"/> 
+<add key="ReportResults" value="True"/> 
 ```
 
 Filename for test results report
 ``` xml
-    <add key="ReportFilename" value="Report.html" />
+<add key="ReportFilename" value="Report.html" />
 ```
 
 Base url to start testing
 ``` xml
-    <add key="BaseUrl" value="http://computer-database.herokuapp.com/computers" />
+<add key="BaseUrl" value="http://computer-database.herokuapp.com/computers" />
 ```
-	
+
 The width to set the web driver window
 ``` xml
-    <add key="DriverWidth" value="1024" /> 
+<add key="DriverWidth" value="1024" /> 
 ```
 
 The height to set the web driver window
 ``` xml
-    <add key="DriverWidth" value="768" /> 
+<add key="DriverWidth" value="768" /> 
 ```
 
 The amount of seconds the driver should wait for the page to load
 ``` xml
-    <add key="PageLoadTimeout" value="5" />
+<add key="PageLoadTimeout" value="5" />
 ```
 
 ## TODOs
