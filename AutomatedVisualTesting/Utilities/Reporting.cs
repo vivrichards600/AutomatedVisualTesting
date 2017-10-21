@@ -77,18 +77,28 @@ namespace AutomatedVisualTesting.Utilities
             // get test name
             var testName = testContext.TestName;
             // get driver type
-            var capabilities = ((RemoteWebDriver) driver).Capabilities;
+            var capabilities = ((RemoteWebDriver)driver).Capabilities;
             var browser = capabilities.BrowserName;
             var reportContents = File.ReadAllText($@"{outputDirectory}\{reportFilename}");
             var todaysDate = DateTime.Now.ToShortDateString();
             var dateAnchor = todaysDate.Replace("/", "");
+
+            var TestInformation = "";
+            try
+            {
+                TestInformation = testContext.Properties["TestInformation"].ToString();
+            }
+            catch (Exception ex)
+            {
+                
+            }
             if (reportContents.Contains(todaysDate))
             {
                 //already logged results todays so log results under todays date
                 reportContents =
                     reportContents.Replace(
-                        $"<h2 id=\"{dateAnchor}\">{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody>",
-                        $"<h2 id=\"{dateAnchor}\">{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr>");
+                        $"<h2 id=\"{dateAnchor}\">{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td><td>Details</td></tr></thead><tbody>",
+                        $"<h2 id=\"{dateAnchor}\">{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td><td>Details</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><td>{TestInformation}</td><tr><tr></tr>");
                 File.WriteAllText($@"{outputDirectory}\{reportFilename}", reportContents);
             }
             else
@@ -98,7 +108,7 @@ namespace AutomatedVisualTesting.Utilities
                     $"<div class=\"col-2\"><h2>Test Runs</h2><ul><li><a href=\"#{dateAnchor}\">{todaysDate}</a></li>");
 
                 reportContents = reportContents.Replace("<div class=\"col-10\">",
-                    $"<div class=\"col-10\"><h2 id=\"{dateAnchor}\">{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><tr></tbody></table>");
+                    $"<div class=\"col-10\"><h2 id=\"{dateAnchor}\">{todaysDate}</h2><table class=\"table\"><thead><tr><td>Status</td><td>Name</td><td>Browser</td><td>Started</td><td>Finished</td><td>Duration</td><td>Details</td></tr></thead><tbody><tr><td>{testOutcome}</td><td>{testName}</td><td class='capitalize'>{browser}</td><td>{testStarted}</td><td>{testFinished}</td><td>{duration}</td><td>{TestInformation}</td><tr></tbody></table>");
                 File.WriteAllText($@"{outputDirectory}\{reportFilename}", reportContents);
             }
         }

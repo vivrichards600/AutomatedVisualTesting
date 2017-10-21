@@ -8,20 +8,31 @@ using static System.Configuration.ConfigurationManager;
 
 namespace AutomatedVisualTesting.Utilities
 {
+    [TestClass]
+    public class InitializeTestContext
+    {
+        public static TestContext TestContext { get; private set; }
+
+        [AssemblyInitialize]
+        public static void AssemblyInit(TestContext context)
+        {
+            TestContext = context;
+        }
+    }
     public class UITestBindingBase
     {
         public static IWebDriver Driver;
 
         /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext { get; set; }
+        ///     Gets or sets the test context which provides
+        ///     information about and functionality for the current test run.
+        /// </summary>
+      ///  public TestContext TestContext { get; set; }
 
+            public TestContext TestContext = InitializeTestContext.TestContext;
         [TestInitialize]
         public void Startup()
         {
-
             // Load settings from app.config
             var driverWidth = Parse(AppSettings.Get("DriverWidth"));
             var driverHeight = Parse(AppSettings.Get("DriverHeight"));
@@ -50,6 +61,10 @@ namespace AutomatedVisualTesting.Utilities
 
             // ensure we close down the Chrome WebDrivers
             Driver.Quit();
+
+            //remove any custom text context properties
+            TestContext.Properties.Remove("Start");
+            TestContext.Properties.Remove("TestInformation");
         }
     }
 }

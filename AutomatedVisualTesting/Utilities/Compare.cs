@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using static System.Configuration.ConfigurationManager;
 
@@ -17,6 +18,7 @@ namespace AutomatedVisualTesting.Utilities
 {
     public static class Compare
     {
+        public static TestContext Context = InitializeTestContext.TestContext;
         public static int DivFactor = 10;
 
         /// <summary>
@@ -92,10 +94,15 @@ namespace AutomatedVisualTesting.Utilities
             Debug.WriteLine("-> Unexpected difference(s) found");
             Debug.WriteLine($@"-> Logging differences screenshot to: - file:///{outputDirectory}\{reportFilename}");
 
+            Context.Properties["TestInformation"] +=
+                $"<figure>Differences screenshot {differencesFilename}<a href=\"{differencesFilename}\"><img src=\"{differencesFilename}\" alt=\"Differences\" class=\"float-left\"></a></figure>";
+
             // Save copy of actual image
             string actualImageFilename = $"{DateTime.Now:yyyy-MM-ddTHH-mm-ss}-ActualImage.png";
             img2.Save($"{outputDirectory}{actualImageFilename}");
             Debug.WriteLine(@"-> Logging actual screenshot to: - file:///" + outputDirectory + actualImageFilename);
+            Context.Properties["TestInformation"] +=
+                $"<figure>Actual screenshot {actualImageFilename}<a href=\"{actualImageFilename}\"><img src=\"{actualImageFilename}\" alt=\"Actual\" class=\"float-left\"></a></figure>";
         }
 
         /// <summary>
@@ -188,13 +195,18 @@ namespace AutomatedVisualTesting.Utilities
                 imageFromUrl.Save(testDataDirectory + imageFileName);
                 Debug.WriteLine(@"-> No base image found for - " + imageFileName);
                 Debug.WriteLine(@"-> Base image created - " + imageFileName);
+                Context.Properties["TestInformation"] +=
+                    $"<figure>No base image for {imageFileName} found. New base image created {imageFileName}<a href=\"{imageFileName}\"><img src=\"{imageFileName}\" alt=\"Differences\" class=\"float-left\"></a></figure>";
             }
 
             var baseImage = Image.FromFile(testDataDirectory + imageFileName);
             var differencePercentage = baseImage.Differences(imageFromUrl, threshold);
             if ((int) (differencePercentage*100) > 0)
+            {
                 CreateDifferenceImage(baseImage, imageFromUrl);
-
+                Context.Properties["TestInformation"] +=
+                    $"<figure>Expected Image {imageFileName}<a href=\"{imageFileName}\"><img src=\"{imageFileName}\" alt=\"Expcted\" class=\"float-left\"></a></figure>";
+            }
             return (int) (differencePercentage*100);
         }
 
@@ -218,11 +230,17 @@ namespace AutomatedVisualTesting.Utilities
                 imageFromUrl.Save(testDataDirectory + imageFileName);
                 Debug.WriteLine(@"-> No base image found for - " + imageFileName);
                 Debug.WriteLine(@"-> Base image created - " + imageFileName);
+                Context.Properties["TestInformation"] +=
+                    $"<figure>No base image for {imageFileName} found. New base image created {imageFileName}<a href=\"{imageFileName}\"><img src=\"{imageFileName}\" alt=\"Differences\" class=\"float-left\"></a></figure>";
             }
             var baseImage = Image.FromFile(testDataDirectory + imageFileName);
             var differencePercentage = baseImage.Differences(imageFromUrl, threshold);
             if ((int) (differencePercentage*100) > 0)
+            {
                 CreateDifferenceImage(baseImage, imageFromUrl);
+                Context.Properties["TestInformation"] +=
+                    $"<figure>Expected Image {imageFileName}<a href=\"{imageFileName}\"><img src=\"{imageFileName}\" alt=\"Expcted\" class=\"float-left\"></a></figure>";
+            }
 
             return (int) (differencePercentage*100);
         }
@@ -247,6 +265,8 @@ namespace AutomatedVisualTesting.Utilities
                 if ((int) (differencePercentage*100) > 0)
                 {
                     CreateDifferenceImage(img1, img2);
+                    Context.Properties["TestInformation"] +=
+                        $"<figure>Expected Image {baseImage}<a href=\"{baseImage}\"><img src=\"{baseImage}\" alt=\"Expcted\" class=\"float-left\"></a></figure>";
                     img2.Save($"{testDataDirectory}{pdf}.ImageFromPdf.png");
                 }
                 return (int) (differencePercentage*100);
