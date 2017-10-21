@@ -111,9 +111,9 @@ public void NoDifferenceBetweenImageAndScreenshotFromUrl()
 ### Compare pdf page to an Image taken previously from a pdf:
 
 ``` c#
-	[TestMethod]
-	public void DifferenceBetweenPdfPageAndImage()
-	{
+[TestMethod]
+public void DifferenceBetweenPdfPageAndImage()
+{
 	//Arrange
 	String pdf = "1.pdf";
 	int page = 1;
@@ -124,7 +124,7 @@ public void NoDifferenceBetweenImageAndScreenshotFromUrl()
 
 	//Assert
 	Assert.IsFalse(difference == 0); // do not allow any difference
-	}
+}
 ```
 ## Debugging when tests fail
 
