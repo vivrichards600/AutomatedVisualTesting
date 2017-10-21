@@ -150,8 +150,7 @@ The height to set the web driver window
 ## TODOs
 There are a number of things I want to add over the next few months - please feel free to get involved in the project!
 
-* Providing a dashboard for diff images and various test info
 * Storage options - AWS/ Google / Local - set in config?
-* Tolerance - ability to adjust to account for hardware colour differences
+* Unit tests!!
 
    

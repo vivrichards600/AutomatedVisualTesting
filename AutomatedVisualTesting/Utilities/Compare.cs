@@ -61,15 +61,13 @@ namespace AutomatedVisualTesting.Utilities
             var cellsize = 16; //each tile is 16 pixels wide and high
             int width = img1.Width/DivFactor, height = img1.Height/DivFactor;
             var differences = img1.GetDifferences(img2);
-            byte maxDifference = 255;
             var originalImage = new Bitmap(img1, width*cellsize + 1, height*cellsize + 1);
-
             var g = Graphics.FromImage(originalImage);
 
             for (var y = 0; y < differences.GetLength(1); y++)
                 for (var x = 0; x < differences.GetLength(0); x++)
                 {
-                    byte cellValue = differences[x, y];
+                    var cellValue = differences[x, y];
                     if (cellValue > threshold)
                         g.DrawRectangle(Pens.DarkMagenta, x*cellsize, y*cellsize, cellsize, cellsize);
                 }
