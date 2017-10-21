@@ -17,25 +17,20 @@ namespace AutomatedVisualTesting.Utilities
         [TestInitialize]
         public void Startup()
         {
+            // Load settings from app.config
+            var driverWidth = Parse(AppSettings.Get("DriverWidth"));
+            var driverHeight = Parse(AppSettings.Get("DriverHeight"));
+            var pageLoadTimeout = Parse(AppSettings.Get("PageLoadTimeout"));
+            var baseUrl = AppSettings.Get("BaseUrl");
+
             // add start time for test
             TestContext.Properties.Add("Start", DateTime.Now.ToLongTimeString());
 
-            // Create new Chrome WebDriver
+            // Create new Chrome WebDriver and set properties
             Driver = new ChromeDriver();
-
-            // Get driver height/width from app.config
-            var driverWidth = Parse(AppSettings.Get("DriverWidth"));
-            var driverHeight = Parse(AppSettings.Get("DriverHeight"));
-            // Set driver height/width of window
+            Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(pageLoadTimeout); //.Add(new TimeSpan(5));
             Driver.Manage().Window.Size = new Size(driverWidth, driverHeight);
 
-            // Get driver height/width from app.config
-            var pageLoadTimeout = Parse(AppSettings.Get("PageLoadTimeout"));
-            // Set page load timeout
-            Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(pageLoadTimeout); //.Add(new TimeSpan(5));
-
-            // Get Base URL from app.config
-            var baseUrl = AppSettings.Get("BaseUrl");
             // Navigate to base url
             Driver.Navigate().GoToUrl(baseUrl);
         }

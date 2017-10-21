@@ -1,11 +1,5 @@
-using System;
-using System.Drawing;
 using AutomatedVisualTesting.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using static System.Int32;
-using static System.Configuration.ConfigurationSettings;
 
 namespace AutomatedVisualTesting
 {
