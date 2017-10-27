@@ -49,6 +49,25 @@ namespace AutomatedVisualTesting.Utilities
 
             // Navigate to base url
             Driver.Navigate().GoToUrl(baseUrl);
+            
+            // Wait until the page has fully loaded
+            WaitForPageLoad();
+        }
+
+        public void WaitForPageLoad()
+        {
+            if (_page != null)
+            {
+                var waitForCurrentPageToStale = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+                waitForCurrentPageToStale.Until(ExpectedConditions.StalenessOf(_page));
+            }
+
+            var waitForDocumentReady = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
+            waitForDocumentReady.Until(
+                wdriver =>
+                        (Driver as IJavaScriptExecutor).ExecuteScript("return document.readyState").Equals("complete"));
+
+            _page = Driver.FindElement(By.TagName("html"));
         }
 
         [TestCleanup]
