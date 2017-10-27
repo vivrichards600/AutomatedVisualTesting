@@ -3,6 +3,7 @@ using System.Drawing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 using static System.Int32;
 using static System.Configuration.ConfigurationManager;
 
@@ -53,6 +54,8 @@ namespace AutomatedVisualTesting.Utilities
             // Wait until the page has fully loaded
             WaitForPageLoad();
         }
+        
+        IWebElement _page = null;
 
         public void WaitForPageLoad()
         {
