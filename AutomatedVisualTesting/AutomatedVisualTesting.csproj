@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="Utilities\ConvertPdf.cs" />
     <Compile Include="Utilities\Compare.cs" />
+    <Compile Include="Utilities\InitializeTestContext.cs" />
     <Compile Include="Utilities\Reporting.cs" />
     <Compile Include="Utilities\SeleniumDriver.cs" />
     <Compile Include="ExampleTests.cs" />

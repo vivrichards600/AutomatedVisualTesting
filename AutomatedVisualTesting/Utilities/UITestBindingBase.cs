@@ -9,28 +9,19 @@ using static System.Configuration.ConfigurationManager;
 
 namespace AutomatedVisualTesting.Utilities
 {
-    [TestClass]
-    public class InitializeTestContext
-    {
-        public static TestContext TestContext { get; private set; }
-
-        [AssemblyInitialize]
-        public static void AssemblyInit(TestContext context)
-        {
-            TestContext = context;
-        }
-    }
     public class UITestBindingBase
     {
         public static IWebDriver Driver;
+
+        private IWebElement _page;
 
         /// <summary>
         ///     Gets or sets the test context which provides
         ///     information about and functionality for the current test run.
         /// </summary>
-      ///  public TestContext TestContext { get; set; }
+        /// public TestContext TestContext { get; set; }
+        public TestContext TestContext = InitializeTestContext.TestContext;
 
-            public TestContext TestContext = InitializeTestContext.TestContext;
         [TestInitialize]
         public void Startup()
         {
@@ -44,7 +35,7 @@ namespace AutomatedVisualTesting.Utilities
             TestContext.Properties.Add("Start", DateTime.Now.ToLongTimeString());
 
             // Set Chrome options
-            ChromeOptions options = new ChromeOptions();
+            var options = new ChromeOptions();
             // Disable warning "Chrome is being controlled by automated test software" 
             // as this can muck up full page screenshots
             options.AddArguments("disable-infobars");
@@ -56,12 +47,10 @@ namespace AutomatedVisualTesting.Utilities
 
             // Navigate to base url
             Driver.Navigate().GoToUrl(baseUrl);
-            
+
             // Wait until the page has fully loaded
             WaitForPageLoad();
         }
-        
-        IWebElement _page = null;
 
         public void WaitForPageLoad()
         {

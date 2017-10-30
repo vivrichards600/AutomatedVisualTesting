@@ -245,33 +245,33 @@ namespace AutomatedVisualTesting.Utilities
             return (int) (differencePercentage*100);
         }
 
-        ///// <summary>
-        /////     Get difference between image and a page of a pdf which is converted into
-        /////     an image and held in memory to compare
-        ///// </summary>
-        ///// <param name="baseImage">Base image to compare</param>
-        ///// <param name="pdf">pdf file to use</param>
-        ///// <param name="page">page of pdf to convert</param>
-        ///// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 1.</param>
-        ///// <returns>Differences between an image and an image taken from a specified pdf page</returns>
-        //public static int GetDifference(string baseImage, string pdf, int page, byte threshold = 1)
-        //{
-        //    var testDataDirectory = AppSettings.Get("TestDataDirectory");
-        //    if (File.Exists(testDataDirectory + baseImage))
-        //    {
-        //        var img1 = Image.FromFile(testDataDirectory + baseImage);
-        //        var img2 = ConvertPdf.GetPdfPageAsImage(pdf, page);
-        //        var differencePercentage = img1.Differences(img2, threshold);
-        //        if ((int) (differencePercentage*100) > 0)
-        //        {
-        //            CreateDifferenceImage(img1, img2);
-        //            Context.Properties["TestInformation"] +=
-        //                $"<figure>Expected Image {baseImage}<a href=\"{baseImage}\"><img src=\"{baseImage}\" alt=\"Expcted\" class=\"float-left\"></a></figure>";
-        //            img2.Save($"{testDataDirectory}{pdf}.ImageFromPdf.png");
-        //        }
-        //        return (int) (differencePercentage*100);
-        //    }
-        //    return -1;
-        //}
+        /// <summary>
+        ///     Get difference between image and a page of a pdf which is converted into
+        ///     an image and held in memory to compare
+        /// </summary>
+        /// <param name="baseImage">Base image to compare</param>
+        /// <param name="pdf">pdf file to use</param>
+        /// <param name="page">page of pdf to convert</param>
+        /// <param name="threshold">How big a difference (out of 255) will be ignored - the default is 1.</param>
+        /// <returns>Differences between an image and an image taken from a specified pdf page</returns>
+        public static int GetDifference(string baseImage, string pdf, int page, byte threshold = 1)
+        {
+            var testDataDirectory = AppSettings.Get("TestDataDirectory");
+            if (File.Exists(testDataDirectory + baseImage))
+            {
+                var img1 = Image.FromFile(testDataDirectory + baseImage);
+                var img2 = ConvertPdf.GetPdfPageAsImage(pdf, page);
+                var differencePercentage = img1.Differences(img2, threshold);
+                if ((int) (differencePercentage*100) > 0)
+                {
+                    CreateDifferenceImage(img1, img2);
+                    Context.Properties["TestInformation"] +=
+                        $"<figure>Expected Image {baseImage}<a href=\"{baseImage}\"><img src=\"{baseImage}\" alt=\"Expcted\" class=\"float-left\"></a></figure>";
+                    img2.Save($"{testDataDirectory}{pdf}.ImageFromPdf.png");
+                }
+                return (int) (differencePercentage*100);
+            }
+            return -1;
+        }
     }
 }
