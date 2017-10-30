@@ -43,8 +43,14 @@ namespace AutomatedVisualTesting.Utilities
             // add start time for test
             TestContext.Properties.Add("Start", DateTime.Now.ToLongTimeString());
 
+            // Set Chrome options
+            ChromeOptions options = new ChromeOptions();
+            // Disable warning "Chrome is being controlled by automated test software" 
+            // as this can muck up full page screenshots
+            options.AddArguments("disable-infobars");
+
             // Create new Chrome WebDriver and set properties
-            Driver = new ChromeDriver();
+            Driver = new ChromeDriver(options);
             Driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(pageLoadTimeout); //.Add(new TimeSpan(5));
             Driver.Manage().Window.Size = new Size(driverWidth, driverHeight);
 
