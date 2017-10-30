@@ -1,5 +1,5 @@
-﻿//using SautinSoft;
-using System.Drawing;
+﻿using System.Drawing;
+using SautinSoft;
 using static System.Configuration.ConfigurationManager;
 
 namespace AutomatedVisualTesting.Utilities

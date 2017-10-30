@@ -82,15 +82,8 @@ namespace AutomatedVisualTesting.Utilities
             var reportContents = File.ReadAllText($@"{outputDirectory}\{reportFilename}");
             var todaysDate = DateTime.Now.ToShortDateString();
             var dateAnchor = todaysDate.Replace("/", "");
+            var testInformation = testContext.Properties["TestInformation"].ToString();
 
-            var testInformation = "";
-            try
-            {
-                testInformation = testContext.Properties["TestInformation"].ToString();
-            }
-            catch (Exception ex)
-            {
-            }
             if (reportContents.Contains(todaysDate))
             {
                 //already logged results todays so log results under todays date

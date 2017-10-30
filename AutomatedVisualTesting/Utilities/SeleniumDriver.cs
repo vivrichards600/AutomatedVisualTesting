@@ -26,7 +26,7 @@ namespace AutomatedVisualTesting.Utilities
                 throw new IOException("Please check screenshots folder exists within test solution to save screenshots");
             }
             string fileName = $"{testDataDirectory}.png";
-            ss.SaveAsFile(fileName, ImageFormat.Png);
+            ss.SaveAsFile(fileName, ScreenshotImageFormat.Png);
             driver.Quit();
         }
 

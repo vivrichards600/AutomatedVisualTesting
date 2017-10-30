@@ -63,7 +63,12 @@ namespace AutomatedVisualTesting.Utilities
             var waitForDocumentReady = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             waitForDocumentReady.Until(
                 wdriver =>
-                        (Driver as IJavaScriptExecutor).ExecuteScript("return document.readyState").Equals("complete"));
+                {
+                    var javaScriptExecutor = Driver as IJavaScriptExecutor;
+                    return
+                        (javaScriptExecutor != null) && javaScriptExecutor.ExecuteScript("return document.readyState")
+                            .Equals("complete");
+                });
 
             _page = Driver.FindElement(By.TagName("html"));
         }
