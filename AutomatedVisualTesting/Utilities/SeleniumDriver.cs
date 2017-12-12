@@ -15,7 +15,7 @@ namespace AutomatedVisualTesting.Utilities
         ///     Save screenshot of currently loaded page
         /// </summary>
         /// <param name="driver">WebDriver</param>
-        public static void SaveScreenShotOfCurrentPage(IWebDriver driver)
+        public static void SaveScreenShotFromCurrentPage(IWebDriver driver)
         {
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             var ss = ((ITakesScreenshot) driver).GetScreenshot();
@@ -35,7 +35,7 @@ namespace AutomatedVisualTesting.Utilities
         /// </summary>
         /// <param name="driver">WebDriver</param>
         /// <param name="elementSelector">Element to take snapshot of</param>
-        public static void SaveElementScreenShotOfCurrentPage(IWebDriver driver, string elementSelector)
+        public static void SaveElementScreenShotFromCurrentPage(IWebDriver driver, string elementSelector)
         {
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             IWebElement element = null;
@@ -127,7 +127,7 @@ namespace AutomatedVisualTesting.Utilities
         /// </summary>
         /// <param name="img">Image to return as Byte array</param>
         /// <returns></returns>
-        public static byte[] ImageToByte(Image img)
+        private static byte[] ImageToByte(Image img)
         {
             var converter = new ImageConverter();
             return (byte[]) converter.ConvertTo(img, typeof(byte[]));

@@ -24,21 +24,23 @@ public class YourTestClass : UITestBindingBase
 }
 ```
 
-To manually take a base image of a web page create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper:
+To manually take a base image of the current web page, pass the WebDriver instance (initialised in the UITestBindingBase) to the helper:
 
 ``` c#
-// Create base image of web page by providing the WebDriver
-SaveScreenShotByUrl(driver);
+// Create base image of a web page by providing the WebDriver
+SaveScreenShotFromCurrentPage(Driver);
 ```
 
 
 ![WebPage screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/HomePage.png "Web Page Screenshot")
 
-To manually take a base image of a particular element or area of a web page, create an instance of the WebDriver, navigate to the URL you want and then pass the WebDriver instance to the helper and specify the selector (specify Id or CssSelector):
+To manually take a base image of a particular element or area of a web page, pass the WebDriver inastance (initialised in the UITestBindingBase) and specify the selector used to locate the element(specify Id or CssSelector):
+
+
 ``` c#
-// Create initial screenshot of website used within regression tests later on
-SaveElementScreenShotByUrl(driver, ".table"); // take base image by using css selector
-SaveElementScreenShotByUrl(driver, "table"); // take base image by using ID selector
+// Create base image of a web element by prviding the WebDriver and element selector
+SaveElementScreenShotFromCurrentPage(Driver, ".table"); // take base image by using css selector
+SaveElementScreenShotFromCurrentPage(Driver, "table"); // take base image by using ID selector
 ```
 
 ![WebElement table screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/TableElement.png "Element Screenshot")
@@ -54,13 +56,13 @@ SavePdfToImage("1.pdf");
 
 ``` c#
 [TestMethod]
-public void NoDifferenceBetweenImageAndScreenshotFromUrl()
+public void NoDifferenceBetweenImageAndScreenshotFromPage()
 {
 	// Arrange
 	var baseImage = "HomePage.png";
 
 	// Act
-	var difference = Compare.GetDifference(_driver, baseImage);
+	var difference = GetDifference(Driver, baseImage);
 
 	// Assert
 	Assert.IsTrue(difference == 0);
@@ -71,15 +73,15 @@ public void NoDifferenceBetweenImageAndScreenshotFromUrl()
 
 ``` c#
 [TestMethod]
-public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
+public void NoDifferenceBetweenElementImageAndScreenshotFromPage()
 {
 	// Arrange
 	var baseImage = "TableElement.png";
 	var elementByCssSelector = ".computers";
 
 	// Act
-	var difference = Compare.GetDifference(_driver, baseImage, elementByCssSelector);
-
+	var difference = GetDifference(Driver, baseImage, elementByCssSelector);
+	
 	// Assert
 	Assert.IsTrue(difference == 0);
 }
@@ -90,16 +92,16 @@ public void NoDifferenceBetweenElementImageAndScreenshotFromUrl()
 ``` c#
 [TestMethod]
 public void NoDifferenceBetweenImageAndScreenshotFromUrl()
-{
+ {
 	// Arrange
 	var baseImage = "HomePageCoveringDynamicElement.png";
 	var elementByCssSelector = ".computers";
 
 	// Cover specified dynamic element on page with blanket
-	SeleniumDriver.CoverDynamicElementBySelector(_driver, elementByCssSelector);
+	CoverDynamicElementBySelector(Driver, elementByCssSelector);
 
 	// Act
-	var difference = Compare.GetDifference(_driver, baseImage);
+	var difference = GetDifference(Driver, baseImage);
 
 	// Assert
 	Assert.IsTrue(difference == 0);
