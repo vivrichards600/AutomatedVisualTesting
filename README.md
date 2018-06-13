@@ -15,10 +15,6 @@ It is also necessary sometimes to check contents of files, which can be quite ti
 ### Base images for websites
 Once you are happy with how a particular area or how the whole of your web page looks you write tests using this framework. The first time you run your tests the base images will not exist,this framework will automatically take the base images for you and alert you to tell you that this has been done.
 
-![WebPage screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabaseHomePage.Chrome.png "Web Page Screenshot")
-
-![WebElement table screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabaseTable.Chrome.png "Element Screenshot")
-
 ### Compare a base image of a web page to an image of a web page taken by visiting a url:
 
 ``` c#
@@ -36,6 +32,8 @@ public void Full_Page_Comparison_Test()
 	Assert.IsTrue(result.Match);
 }
 ```
+
+![WebPage screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabaseHomePage.Chrome.png "Web Page Screenshot")
 
 ### Compare a base image of an element on a web page to an image of an element taken by visiting a url:
 
@@ -55,6 +53,8 @@ public void Individual_Page_Element_Comparison_Test()
     	Assert.IsTrue(result.Match);
 }
 ```
+
+![WebElement table screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabaseTable.Chrome.png "Element Screenshot")
 
 ### Compare a base image of a web page, whilst covering a dynamic element to an image of a web page taken by visiting a url:
 
