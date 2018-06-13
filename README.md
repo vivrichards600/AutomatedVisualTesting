@@ -75,7 +75,7 @@ public void Full_Page_Comparison_Covering_Dynamic_Element_Test()
 }
 ```
 
-![Web page with dynamic WebElement table covered screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/HomePageCoveringDynamicElement.png "Element Screenshot")
+![Web page with dynamic WebElement table covered screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabaseHomePageWithoutTable.Chrome.png "Element Screenshot")
 
 ### Compare pdf page to an Image taken previously from a pdf:
 
