@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.Extensions;
@@ -11,133 +10,8 @@ namespace AutomatedVisualTesting.Utilities
 {
     public static class SeleniumDriver
     {
-        /// <summary>
-        ///     Save screenshot of currently loaded page
-        /// </summary>
-        /// <param name="driver">WebDriver</param>
-        public static void SaveScreenShotFromCurrentPage(IWebDriver driver)
-        {
-            var testDataDirectory = AppSettings.Get("TestDataDirectory");
-            var ss = ((ITakesScreenshot) driver).GetScreenshot();
-            if (!Directory.Exists(testDataDirectory))
-            {
-                // screenshot directory doesn't exist
-                driver.Quit();
-                throw new IOException("Please check screenshots folder exists within test solution to save screenshots");
-            }
-            string fileName = $"{testDataDirectory}.png";
-            ss.SaveAsFile(fileName, ScreenshotImageFormat.Png);
-            driver.Quit();
-        }
+        private static readonly string TestDataDirectory = AppSettings.Get("TestDataDirectory");
 
-        /// <summary>
-        ///     Save screenshot of element on currently loaded page
-        /// </summary>
-        /// <param name="driver">WebDriver</param>
-        /// <param name="elementSelector">Element to take snapshot of</param>
-        public static void SaveElementScreenShotFromCurrentPage(IWebDriver driver, string elementSelector)
-        {
-            var testDataDirectory = AppSettings.Get("TestDataDirectory");
-            IWebElement element = null;
-            try
-            {
-                // try to find element by ID
-                driver.FindElement(By.Id(elementSelector));
-                element = driver.FindElement(By.Id(elementSelector));
-            }
-            catch
-            {
-                // try to find element by CSS Selector
-                element = driver.FindElement(By.CssSelector(elementSelector));
-            }
-
-            var byteArray = ((ITakesScreenshot) driver).GetScreenshot().AsByteArray;
-            var screenshot = new Bitmap(new MemoryStream(byteArray));
-            try
-            {
-                var croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width,
-                    element.Size.Height);
-                screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
-
-                if (!Directory.Exists(testDataDirectory))
-                {
-                    // screenshot directory doesn't exist
-                    driver.Quit();
-                    throw new IOException(
-                        "Please check screenshots folder exists within test solution to save screenshots");
-                }
-                string fileName = $"{testDataDirectory}.png";
-                screenshot.Save(fileName, ImageFormat.Png);
-                driver.Quit();
-            }
-            catch
-            {
-                // could not find element!
-                throw new IOException("Could not find element to take a screenshot");
-            }
-        }
-
-        /// <summary>
-        ///     Get screenshot of currently loaded page
-        /// </summary>
-        /// <param name="driver">WebDriver</param>
-        /// <returns></returns>
-        public static byte[] GetScreenshotOfCurrentPage(IWebDriver driver)
-        {
-            var bytes = ImageToByte(GetScreenShotOfPage(driver));
-            driver.Quit();
-
-            return bytes;
-        }
-
-        /// <summary>
-        ///     Get screenshot of element for currently loaded page
-        /// </summary>
-        /// <param name="driver">WebDriver</param>
-        /// <param name="elementSelector">Selector to find element</param>
-        /// <returns></returns>
-        public static byte[] GetScreenshotOfCurrentPage(IWebDriver driver, string elementSelector)
-        {
-            IWebElement element = null;
-            try
-            {
-                // try to find element by ID
-                driver.FindElement(By.Id(elementSelector));
-                element = driver.FindElement(By.Id(elementSelector));
-            }
-            catch
-            {
-                // try to find element by CSS Selector
-                element = driver.FindElement(By.CssSelector(elementSelector));
-            }
-
-            var byteArray = ((ITakesScreenshot) driver).GetScreenshot().AsByteArray;
-            var screenshot = new Bitmap(new MemoryStream(byteArray));
-            var croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width,
-                element.Size.Height);
-            screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
-            var bytes = ImageToByte(screenshot);
-            driver.Quit();
-
-            return bytes;
-        }
-
-        /// <summary>
-        ///     Returns image as byte array
-        /// </summary>
-        /// <param name="img">Image to return as Byte array</param>
-        /// <returns></returns>
-        private static byte[] ImageToByte(Image img)
-        {
-            var converter = new ImageConverter();
-            return (byte[]) converter.ConvertTo(img, typeof(byte[]));
-        }
-
-        /// <summary>
-        ///     Cover the specified dynamic element on the renedered page
-        /// </summary>
-        /// <param name="driver">WebDriver</param>
-        /// <param name="elementSelector">Element Selector</param>
         public static void CoverDynamicElementBySelector(IWebDriver driver, string elementSelector)
         {
             IWebElement element = null;
@@ -168,16 +42,28 @@ namespace AutomatedVisualTesting.Utilities
             // Set javascript to execute on browser which will cover the dynamic content
             var replaceDynamicContentScript = "var div = document.createElement('div');div.setAttribute('style'," +
                                               style + ");document.body.appendChild(div); ";
+
             driver.ExecuteJavaScript(replaceDynamicContentScript);
         }
 
-        /// <summary>
-        ///     Returns a screenshot of the current page
-        ///     If set in the config to False will return viewport image, if set True returns full page image
-        /// </summary>
-        /// <param name="driver">WebDriver instance</param>
-        /// <returns></returns>
-        public static Image GetScreenShotOfPage(IWebDriver driver)
+        public static void CreateBaseImage(string img1, IWebDriver driver)
+        {
+            var baseImage = new Bitmap(new MemoryStream(GetScreenshotOfCurrentPage(driver)));
+            baseImage.Save(TestDataDirectory + img1);
+        }
+
+        public static void CreateBaseImage(string img1, string element, IWebDriver driver)
+        {
+            var baseImage = GetScreenshotOfElement(driver, element);
+            baseImage.Save(TestDataDirectory + img1);
+        }
+
+        public static void CreateBaseImage(string img1, Image img2)
+        {
+            img2.Save(TestDataDirectory + img1);
+        }
+
+        public static Image GetFullPageScreenshot(IWebDriver driver)
         {
             // If set to false only take screenshot of whats in view and not the whole page
             var fullPageScreenshot = AppSettings.Get("FullPageScreenshot");
@@ -189,19 +75,15 @@ namespace AutomatedVisualTesting.Utilities
             }
 
             // Get the total size of the page
-            var totalWidth =
-                (int) (long) ((IJavaScriptExecutor) driver).ExecuteScript("return document.body.offsetWidth");
-            var totalHeight =
-                (int)
-                (long) ((IJavaScriptExecutor) driver).ExecuteScript("return  document.body.parentNode.scrollHeight");
+            var totalWidth = (int) (long) ((IJavaScriptExecutor) driver).ExecuteScript("return document.body.offsetWidth");
+            var totalHeight = (int) (long) ((IJavaScriptExecutor) driver).ExecuteScript("return  document.body.parentNode.scrollHeight");
 
             // Get the size of the viewport
-            var viewportWidth =
-                (int) (long) ((IJavaScriptExecutor) driver).ExecuteScript("return document.body.clientWidth");
+            var viewportWidth = (int) (long) ((IJavaScriptExecutor) driver).ExecuteScript("return document.body.clientWidth");
             var viewportHeight = (int) (long) ((IJavaScriptExecutor) driver).ExecuteScript("return window.innerHeight");
 
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
-            string fileName = $"{testDataDirectory}test.png";
+            var fileName = string.Format("{0}test.png", testDataDirectory);
 
             // We only care about taking multiple images together if it doesn't already fit
             if ((totalWidth <= viewportWidth) && (totalHeight <= viewportHeight))
@@ -242,15 +124,14 @@ namespace AutomatedVisualTesting.Utilities
                     var xDiff = rectangle.Right - previous.Right;
                     var yDiff = rectangle.Bottom - previous.Bottom;
                     // Scroll
-                    ((IJavaScriptExecutor) driver).ExecuteScript($"window.scrollBy({xDiff}, {yDiff})");
+                    ((IJavaScriptExecutor) driver).ExecuteScript(string.Format("window.scrollBy({0}, {1})", xDiff, yDiff));
                 }
                 // Take Screenshot
                 var screenshot = driver.TakeScreenshot();
                 // Build an Image out of the Screenshot
                 var screenshotImage = ScreenshotToImage(screenshot);
                 // Calculate the source Rectangle
-                var sourceRectangle = new Rectangle(viewportWidth - rectangle.Width, viewportHeight - rectangle.Height,
-                    rectangle.Width, rectangle.Height);
+                var sourceRectangle = new Rectangle(viewportWidth - rectangle.Width, viewportHeight - rectangle.Height, rectangle.Width, rectangle.Height);
                 // Copy the Image
                 using (var graphics = Graphics.FromImage(stitchedImage))
                 {
@@ -262,6 +143,43 @@ namespace AutomatedVisualTesting.Utilities
             return stitchedImage;
         }
 
+        public static byte[] GetScreenshotOfCurrentPage(IWebDriver driver)
+        {
+            var bytes = ImageToByte(GetFullPageScreenshot(driver));
+            return bytes;
+        }
+
+        public static Image GetScreenshotOfElement(IWebDriver driver, string elementSelector)
+        {
+            var testDataDirectory = AppSettings.Get("TestDataDirectory");
+            IWebElement element = null;
+            try
+            {
+                // try to find element by ID
+                driver.FindElement(By.Id(elementSelector));
+                element = driver.FindElement(By.Id(elementSelector));
+            }
+            catch
+            {
+                // try to find element by CSS Selector
+                element = driver.FindElement(By.CssSelector(elementSelector));
+            }
+
+            var byteArray = ((ITakesScreenshot) driver).GetScreenshot().AsByteArray;
+            var screenshot = new Bitmap(new MemoryStream(byteArray));
+
+            var croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width, element.Size.Height);
+            screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
+
+            return screenshot;
+        }
+
+        public static byte[] ImageToByte(Image img)
+        {
+            var converter = new ImageConverter();
+            return (byte[]) converter.ConvertTo(img, typeof(byte[]));
+        }
+
         private static Image ScreenshotToImage(Screenshot screenshot)
         {
             Image screenshotImage;
@@ -270,6 +188,16 @@ namespace AutomatedVisualTesting.Utilities
                 screenshotImage = Image.FromStream(memStream);
             }
             return screenshotImage;
+        }
+
+        public static string GetPageText(IWebDriver driver)
+        {
+           return driver.FindElement(By.TagName("body")).Text;
+        }
+
+        public static void GetLayoutOnly(IWebDriver driver)
+        {
+
         }
     }
 }
