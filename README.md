@@ -1,6 +1,6 @@
-# Automated Visual Testing
-
 [![Build status](https://ci.appveyor.com/api/projects/status/92lghgt6644av4cy?svg=true)](https://ci.appveyor.com/project/vivrichards600/automatedvisualtesting)
+
+# Automated Visual Testing
 
 ![Differences screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/diff.png "Chrome Differences Screenshot")
 
