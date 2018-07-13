@@ -33,8 +33,8 @@ namespace AutomatedVisualTesting
         [TestMethod]
         public void Full_Page_Comparison_Test()
         {
-            Driver.Navigate().GoToUrl("https://computer-database.herokuapp.com/computers");
-            var baseImage = "ComputerDatabaseHomePage.Chrome.png";
+            Driver.Navigate().GoToUrl("https://www.warnerbros.com/archive/spacejam/movie/jam.html");
+            var baseImage = "SpaceJamHomepage.Chrome.png";
             var result = Differences(baseImage, Driver, _options);
 
             Assert.IsTrue(result.Match);
@@ -43,10 +43,10 @@ namespace AutomatedVisualTesting
         [TestMethod]
         public void Full_Page_Comparison_Covering_Dynamic_Element_Test()
         {
-            Driver.Navigate().GoToUrl("https://computer-database.herokuapp.com/computers");
-            var baseImage = "ComputerDatabaseHomePageWithoutTable.Chrome.png";
+            Driver.Navigate().GoToUrl("https://www.warnerbros.com/archive/spacejam/movie/jam.html");
+            var baseImage = "SpaceJamHomepageWithoutFooterLink.Chrome.png";
 
-            CoverDynamicElementBySelector(Driver, ".computers");
+            CoverDynamicElementBySelector(Driver, ".footer-links");
 
             var result = Differences(baseImage, Driver, _options);
 
@@ -56,9 +56,9 @@ namespace AutomatedVisualTesting
         [TestMethod]
         public void Individual_Page_Element_Comparison_Test()
         {
-            Driver.Navigate().GoToUrl("https://computer-database.herokuapp.com/computers");
-            var element = ".computers";
-            var baseImage = "ComputerDatabaseTable.Chrome.png";
+            Driver.Navigate().GoToUrl("https://www.warnerbros.com/archive/spacejam/movie/jam.html");
+            var element = "img";
+            var baseImage = "SpaceJamShuttleImage.Chrome.png";
 
             var result = Differences(baseImage, element, Driver);
 

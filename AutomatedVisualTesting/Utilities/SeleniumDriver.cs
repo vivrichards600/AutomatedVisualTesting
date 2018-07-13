@@ -162,7 +162,18 @@ namespace AutomatedVisualTesting.Utilities
             catch
             {
                 // try to find element by CSS Selector
-                element = driver.FindElement(By.CssSelector(elementSelector));
+                var numberOfElemements = driver.FindElements(By.CssSelector(elementSelector)).Count;
+
+                if (numberOfElemements >= 1)
+                {
+                    // Todo: just grab first element for now - need to fix!
+                    element = driver.FindElements(By.CssSelector(elementSelector))[0];
+                }
+                else
+                {
+                    element = driver.FindElement(By.CssSelector(elementSelector));
+                }
+               
             }
 
             var byteArray = ((ITakesScreenshot) driver).GetScreenshot().AsByteArray;
