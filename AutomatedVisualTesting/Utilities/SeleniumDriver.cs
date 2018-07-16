@@ -34,14 +34,11 @@ namespace AutomatedVisualTesting.Utilities
             var elementHeight = element.Size.Height;
 
             // Set styling to place over the top of the dynamic content
-            var style =
-                string.Format(
-                    "'position:absolute;top:{1}px;left:{0}px;width:{2}px;height:{3}px;color:white;background-color:#8b008b;text-align: center;'",
-                    elementX, elementY, elementWidth, elementHeight);
+            var style = string.Format("'position:absolute;top:{1}px;left:{0}px;width:{2}px;height:{3}px;color:white;background-color:#8b008b;text-align: center;'", elementX,
+                elementY, elementWidth, elementHeight);
 
             // Set javascript to execute on browser which will cover the dynamic content
-            var replaceDynamicContentScript = "var div = document.createElement('div');div.setAttribute('style'," +
-                                              style + ");document.body.appendChild(div); ";
+            var replaceDynamicContentScript = "var div = document.createElement('div');div.setAttribute('style'," + style + ");document.body.appendChild(div); ";
 
             driver.ExecuteJavaScript(replaceDynamicContentScript);
         }
@@ -143,6 +140,15 @@ namespace AutomatedVisualTesting.Utilities
             return stitchedImage;
         }
 
+        public static void GetLayoutOnly(IWebDriver driver)
+        {
+        }
+
+        public static string GetPageText(IWebDriver driver)
+        {
+            return driver.FindElement(By.TagName("body")).Text;
+        }
+
         public static byte[] GetScreenshotOfCurrentPage(IWebDriver driver)
         {
             var bytes = ImageToByte(GetFullPageScreenshot(driver));
@@ -162,18 +168,7 @@ namespace AutomatedVisualTesting.Utilities
             catch
             {
                 // try to find element by CSS Selector
-                var numberOfElemements = driver.FindElements(By.CssSelector(elementSelector)).Count;
-
-                if (numberOfElemements >= 1)
-                {
-                    // Todo: just grab first element for now - need to fix!
-                    element = driver.FindElements(By.CssSelector(elementSelector))[0];
-                }
-                else
-                {
-                    element = driver.FindElement(By.CssSelector(elementSelector));
-                }
-               
+                element = driver.FindElement(By.CssSelector(elementSelector));
             }
 
             var byteArray = ((ITakesScreenshot) driver).GetScreenshot().AsByteArray;
@@ -199,16 +194,6 @@ namespace AutomatedVisualTesting.Utilities
                 screenshotImage = Image.FromStream(memStream);
             }
             return screenshotImage;
-        }
-
-        public static string GetPageText(IWebDriver driver)
-        {
-           return driver.FindElement(By.TagName("body")).Text;
-        }
-
-        public static void GetLayoutOnly(IWebDriver driver)
-        {
-
         }
     }
 }

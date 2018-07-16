@@ -11,7 +11,7 @@ namespace AutomatedVisualTesting.Utilities
             var testDataDirectory = AppSettings.Get("TestDataDirectory");
             var f = new PdfFocus();
             f.OpenPdf(string.Format("{0}{1}", testDataDirectory, filename));
-            if (f.PageCount >= page)
+            if (f.PageCount > page)
             {
                 f.ImageOptions.Dpi = 300;
                 return f.ToDrawingImage(page);

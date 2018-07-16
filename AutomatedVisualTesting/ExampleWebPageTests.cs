@@ -19,6 +19,25 @@ namespace AutomatedVisualTesting
             Driver.Quit();
         }
 
+
+
+        [TestMethod]
+        public void Google_Homepage_Will_Look_As_Expected()
+        {
+            var baseImage = "GoogleHomePage.png";
+
+            var driver = new ChromeDriver();
+            driver.Navigate().GoToUrl("http://www.google.co.uk/");
+
+            var options = new ComparisonOptions { CreateDifferenceImage = true };
+
+            var result = Differences(baseImage, driver, options);
+
+            Assert.IsTrue(result.Match);
+
+            driver.Quit();
+        }
+
         [TestMethod]
         public void Full_Page_Comparison_Covering_Dynamic_Element_Test()
         {

@@ -25,7 +25,7 @@ namespace AutomatedVisualTesting.Utilities
             if (!File.Exists(TestDataDirectory + img1)) CreateBaseImage(img1, img2);
 
             var image1 = Image.FromFile(TestDataDirectory + img1);
-          
+
             return Differences(image1, img2, options);
         }
 
@@ -35,7 +35,7 @@ namespace AutomatedVisualTesting.Utilities
             if (!File.Exists(TestDataDirectory + baseImage)) CreateBaseImage(baseImage, element, driver);
 
             var image1 = Image.FromFile(TestDataDirectory + baseImage);
-            var imageFromWebDriver = GetScreenshotOfElement(driver, element); 
+            var imageFromWebDriver = GetScreenshotOfElement(driver, element);
 
             return Differences(image1, imageFromWebDriver, options);
         }

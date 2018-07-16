@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>AutomatedVisualTesting</id>
+    <version>2.0</version>
+    <title>Automated Visual Testing</title>
+    <authors>Viv Richards</authors>
+    <owners>Viv Richards</owners>
+    <projectUrl>https://github.com/vivrichards600/automatedvisualtesting</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Visual Testing framework to allow tests written in Selenium to compare screenshots and highlight any differences</description>
+    <releaseNotes>Ability to compare pdf pages added as well as a sample test to show how to create a pdf comparison test.</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>Automation Visual Testing</tags>
+    <dependencies>
+      <dependency id="Selenium.Support" version="3.4.0" />
+      <dependency id="Selenium.WebDriver" version="3.12.1" />
+      <dependency id="Selenium.WebDriver.ChromeDriver" version="2.40.0" />
+      <dependency id="sautinsoft.pdffocus" version="6.9.7.6" />
+    </dependencies>
+  </metadata>
+  <files>
+      <file src="ExampleWebPageTests.cs" target="ExampleWebPageTests.cs" />
+      <file src="ExampleWebPageTests.cs" target="ExamplePdfTest.cs" />
+      <file src="TestData\Test.pdf" target="TestData\Test.pdf" />
+      <file src="app.config" target="app.config" />
+    </files>
+</package>
