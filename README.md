@@ -33,8 +33,6 @@ public void Full_Page_Comparison_Test()
 }
 ```
 
-![WebPage screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabaseHomePage.Chrome.png "Web Page Screenshot")
-
 ### Compare a base image of an element on a web page to an image of an element taken by visiting a url:
 
 ``` c#
@@ -54,8 +52,6 @@ public void Individual_Page_Element_Comparison_Test()
 }
 ```
 
-![WebElement table screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabaseTable.Chrome.png "Element Screenshot")
-
 ### Compare a base image of a web page, whilst covering a dynamic element to an image of a web page taken by visiting a url:
 
 ``` c#
@@ -74,8 +70,6 @@ public void Full_Page_Comparison_Covering_Dynamic_Element_Test()
     	Assert.IsTrue(result.Match);
 }
 ```
-
-![Web page with dynamic WebElement table covered screenshot](https://github.com/vivrichards600/AutomatedVisualTesting/blob/master/AutomatedVisualTesting/TestData/ComputerDatabaseHomePageWithoutTable.Chrome.png "Element Screenshot")
 
 ### Compare pdf page to an Image taken previously from a pdf:
 
