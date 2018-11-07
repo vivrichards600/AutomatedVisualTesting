@@ -196,6 +196,7 @@ namespace AutomatedVisualTesting.Utilities
             return screenshotImage;
         }
 
+        // Experimental!
         public static void CreatePageFlow(IWebDriver driver)
         {
             // Inject javascript which draws lines to show the tab flow througha page

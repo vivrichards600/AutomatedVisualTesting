@@ -24,6 +24,7 @@ namespace AutomatedVisualTesting
             Driver.Navigate().GoToUrl("http://computer-database.herokuapp.com/computers/new");
             var baseImage = "ComputerDatabaseAddComputerPageFlow.Chrome.png";
 
+            // Experimental!
             SeleniumDriver.CreatePageFlow(Driver);
 
             var result = Compare.Differences(baseImage, Driver);
