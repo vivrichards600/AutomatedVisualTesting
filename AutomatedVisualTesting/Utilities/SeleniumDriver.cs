@@ -195,5 +195,13 @@ namespace AutomatedVisualTesting.Utilities
             }
             return screenshotImage;
         }
+
+        public static void CreatePageFlow(IWebDriver driver)
+        {
+            // Inject javascript which draws lines to show the tab flow througha page
+            var flowScript = @"var inputs=document.querySelectorAll(""input, select, button, a"");for(I=0;I<inputs.length;I++){var currentInput=inputs[I].getBoundingClientRect(),nextInput=null;I<inputs.length-1?nextInput=inputs[I+1].getBoundingClientRect():(lastInput=inputs[I],nextInput=currentInput);var currentInputLeft=currentInput.left+currentInput.width/2,currentInputTop=currentInput.top+currentInput.height/2,nextInputLeft=nextInput.left+nextInput.width/2,nextInputTop=nextInput.top+nextInput.height/2;0==I&&document.body.insertAdjacentHTML(""afterbegin"",'<svg style=""position:absolute;z-index:5555;height:100%;width:100%;"" ><line x1=""0"" y1=""0"" x2=""'+currentInputLeft+'"" y2=""'+currentInputTop+'"" style=""stroke:rgb(255,0,0);stroke-width:3"" /><circle cx=""'+currentInputLeft+'"" cy=""'+currentInputTop+'"" r=""3"" stroke=""red""/></svg>'),document.body.insertAdjacentHTML(""afterbegin"",'<svg style=""position:absolute;z-index:5555;height:100%;width:100%;"" ><line x1=""'+currentInputLeft+'"" y1=""'+currentInputTop+'"" x2=""'+nextInputLeft+'"" y2=""'+nextInputTop+'"" style=""stroke:rgb(255,0,0);stroke-width:3"" /><circle cx=""'+nextInputLeft+'"" cy=""'+nextInputTop+'"" r=""3"" stroke=""red""/></svg>')}";
+            driver.ExecuteJavaScript(flowScript);
+        }
+
     }
 }
