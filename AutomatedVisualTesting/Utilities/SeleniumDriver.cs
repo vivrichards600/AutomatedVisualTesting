@@ -173,9 +173,9 @@ namespace AutomatedVisualTesting.Utilities
 
             var byteArray = ((ITakesScreenshot) driver).GetScreenshot().AsByteArray;
             var screenshot = new Bitmap(new MemoryStream(byteArray));
-
-            var croppedImage = new Rectangle(element.Location.X, element.Location.Y, element.Size.Width, element.Size.Height);
-            screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
+            
+            var pixelRatio = screenshot.Size.Width / driver.FindElement(By.TagName("body")).Size.Width;
+            var croppedImage = new Rectangle(pixelRatio * element.Location.X, pixelRatio * element.Location.Y, pixelRatio * element.Size.Width, pixelRatio * element.Size.Height);            screenshot = screenshot.Clone(croppedImage, screenshot.PixelFormat);
 
             return screenshot;
         }
